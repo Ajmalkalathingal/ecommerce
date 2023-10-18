@@ -1,0 +1,31 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Home{% endblock title %}
+
+{% block main-content %} 
+
+
+<div class="mt-5">
+    <h4 class="container">We founnd {{category.count}} categories</h4>
+    <hr>
+   <div class="container my-5">
+    <div class="row">
+     {% for c in category %}
+     <div class="col-sm-3">
+      <div class=" container mb-3">
+        <div class="card-body hover">
+         <a href="{% url 'app:category_product_list' c.cid %}" class="btn">
+         <img src="{{ c.image.url }}" alt="" width="100%"><br>
+           <span class="fw-bold">{{c.title}}</span><br>
+           <span class=""> {{c.category.count}} product {{c.category.count|pluralize}} </span></a>
+         </div>
+       </div>
+     </div>
+     {% endfor %}
+     </div>
+     </div>
+     </div>
+
+
+
+{% endblock main-content %}

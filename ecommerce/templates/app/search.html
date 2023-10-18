@@ -1,0 +1,72 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Search Results{% endblock title %}
+
+{% block main-content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12 bg-primary text-white py-4 rounded">
+        <div class="container">
+            {% if search %}
+                <h1 class="font-weight-bold">{{ query }}</h1>
+            {% else %}
+                <h1 class="font-weight-bold">Product Found</h1>
+            {% endif %}
+            <p>We found {{ product|length }} item{{ product|length|pluralize }}.</p>
+        </div>
+    </div>
+</div>
+
+    <div class="row mt-4">
+        {% for p in product %}
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <img src="{{ p.product_image.url }}" alt="{{ p.title }}" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ p.title }}</h5>
+                        <p class="card-text">Price: ${{ p.selling_price }}</p>
+                        <a href="{% url 'app:productdetail' p.id %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Add custom CSS styles here to enhance the appearance of your page */
+    .bg-primary {
+        background-color: #42f5aa;
+    }
+
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .card-img-top {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+    }
+
+    .card-text {
+        font-size: 1rem;
+        color: #666;
+    }
+
+    .btn-primary {
+        background-color: #42f5aa;
+        border-color: #42f5aa;
+    }
+
+    .btn-primary:hover {
+        background-color: #39db9a;
+        border-color: #39db9a;
+    }
+</style>
+{% endblock main-content %}
+

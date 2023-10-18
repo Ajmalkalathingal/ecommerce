@@ -1,0 +1,172 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Login{% endblock title %}
+{% block main-content %}
+<style>
+  a{
+    text-decoration: none;
+    color: black;
+  }
+  .card-title {
+    margin-bottom: 20px;
+  }
+  .filter input {
+    width: 100%;
+  }
+  input[type="range"] {
+  width: 100%;
+  height: 20px;
+  /* Set the background color for the track */
+  /* background: linear-gradient(to right, #FF5733 0%, #FF5733 100%); */
+  /* Remove the default styling */
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Style the slider thumb (the draggable part) */
+input[type="range"]::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  /* background-color: #FF5733; */
+  cursor: pointer;
+  /* Add a border to the thumb if needed */
+  border: 2px solid white;
+  border-radius: 50%;
+}
+</style>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-3 mb-3">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h2 class="card-title">By Cetegories</h2>
+          {% for c in cetogory %}
+            <input type="checkbox" class="filter-checkbox" value="{{c.id}}" data-filter="cetogory" name="checkbox"> <span> <a href=""><img src="{{ c.image.url }}" height="30" width="30" class=" rounded-circle" alt=""></span> <span>{{c.title}}</span></a><br><br>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h2 class="card-title">By brand</h2>
+          {% for c in brand %}
+            <input type="checkbox" class="filter-checkbox" value="{{c.id}}" data-filter="brand" name="checkbox"> <span> <a href=""><img src="{{ c.image.url }}" height="30" width="30" class=" rounded-circle" alt=""></span> <span>{{c.brand_name}}</span></a><br><br>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body filter">
+          <h2 class="card-title">Price range</h2>         
+            <input style="width: 100%;border-radius: 8px;background-color: greenyellow;" type="range" min="{{max_min_price.selling_price__min}}" max="{{max_min_price.selling_price__max}}" id="range" oninput="max_price.value=this.value" value="{{max_min_price.selling_price__min}}">
+              <span>from {{max_min_price.selling_price__min|floatformat}}</span>
+              <span style="position: absolute; right: 0; margin-right: 15px;">to {{max_min_price.selling_price__max|floatformat}}</span> <br>
+              <input style="border-radius: 8px;border-color: greenyellow;" type="number" min="{{max_min_price.selling_price__min}}" max="{{max_min_price.selling_price__max}}" id="max_value" value="{{max_min_price.selling_price__min}}" onkeyup="range.value=this.value"><br>
+              <input type="button" class="btn btn-success mt-4" value="Submit" id="filter-button">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container mt-5" id="filterd-product">
+  <div class="text-center">
+    <h4 class="mb-4">Discover Our Products</h4>
+    <!-- <span class="">{{ product.count }}</span> -->
+    <hr class="mb-5">
+  </div>
+  <div class="row">
+    {% for p in product %}
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <img src="{{ p.product_image.url }}"  class="card-img-top">
+        <div class="card-body">
+          <h5 class="card-title">{{ p.title }}</h5>
+          <p class="card-text">{{ p.description|truncatechars:50 }}</p>
+        </div>
+        <div class="card-footer">
+          <div class="d-flex justify-content-between">
+            <span class="fw-bold">Price: <i class="fa-solid fa-indian-rupee-sign"></i> {{ p.selling_price }}</span>
+            <a href="{% url 'app:productdetail' p.id %}" class="btn btn-primary">View Details</a>
+
+            <a href="{% url 'app:add-to-cart' %}">
+              <i class="fas fa-shopping-cart"></i> 
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+  
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+ 
+ $(document).ready(function(){
+  $('.filter-checkbox, #filter-button').on('click', function(){
+    console.log('clicked')
+
+    let filter_object = {}
+
+    let max_price = $('#max_value').attr('max')
+    let min_price = $('#max_value').val()
+
+    filter_object.max_price = parseInt(max_price)
+    filter_object.min_price = parseInt(min_price)
+
+    let filter_value = $(this).val()
+    let filter_key = $(this).data('filter')
+    console.log(filter_value) 
+    console.log(filter_key)
+    
+    let checkboxs = document.querySelectorAll('input[data-filter='+ filter_key +']:checked')
+
+    filter_object[filter_key] = Array.from(checkboxs).map(function(element){
+      console.log(element)
+      return element.value
+    }) 
+
+    console.log(filter_object)
+    $.ajax({
+      url : '/filter-products',
+      data : filter_object,
+      dataType : 'json',
+      beforeSend : function(){
+        console.log('trying to filter data')
+      },
+      success : function(response){
+        console.log(response)
+        console.log('data filter')
+
+        $('#filterd-product').html(response.data)
+      }
+
+    })
+  })
+  $('#max_price').on('blur',function(){
+    let min_price = $(this).attr('min')
+    let max_price = $(this).attr('max')
+    let current_price = $(this).val()
+    console.log(max_price,min_price,current_price)
+
+    if(current_price < parseInt(max_price) || current_price > parseInt(min_price)){
+      alert('value between'+ min_price +'and'+ max_price)
+    }
+
+    return false
+
+  })
+ })
+</script>
+
+
+{% endblock %}

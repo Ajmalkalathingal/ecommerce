@@ -1,0 +1,37 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Payment Cancelled{% endblock title %}
+
+{% block main-content %}
+<div class="container mt-5">
+  <div class="text-center">
+    <h4 class="mb-4">Your Order Details </h4>
+  </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% for item in orders %}
+            <div class="card" style="width:  85%;">
+                <div class="row no-gutters">
+                  <div class="col-md-4">
+                    <img class="card-img" src="{{ item.image }}" alt="{{ item.title }}">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h3 class="card-title">Item : {{ item.item }}</h3>
+                      <p class="card-text"> Price : {{ item.price }}</p>
+                      <p class="card-text"> Quantity : {{ item.qty }}</p>
+                      <p class="card-text"> Total Price : {{ item.total }}</p>
+                      <p class="card-text"> Paid Amount : {{ item.order.price }}</p>
+                      <p class="card-text"> Paid Status : {{ item.order.paid_status }}</p>
+                      <p class="card-text"> Ordered Date : {{ item.order.orderd_date }}</p>
+                      <p class="card-text"> Status : {{ item.order.status }}</p>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

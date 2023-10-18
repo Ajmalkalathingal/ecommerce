@@ -1,0 +1,30 @@
+<div class="container mt-5" id="filterd-product">
+  <div class="text-center">
+    <h4 class="mb-4">Discover Our Products</h4>
+    <!-- <span class="">{{ product.count }}</span> -->
+    <hr class="mb-5">
+  </div>
+  <div class="row">
+    {% for p in product %}
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <img src="{{ p.product_image.url }}"  class="card-img-top">
+        <div class="card-body">
+          <h5 class="card-title">{{ p.title }}</h5>
+          <p class="card-text">{{ p.description|truncatechars:50 }}</p>
+        </div>
+        <div class="card-footer">
+          <div class="d-flex justify-content-between">
+            <span class="fw-bold">Price: <i class="fa-solid fa-indian-rupee-sign"></i> {{ p.selling_price }}</span>
+            <a href="{% url 'app:productdetail' p.id %}" class="btn btn-primary">View Details</a>
+
+            <a href="{% url 'app:add-to-cart' %}">
+              <i class="fas fa-shopping-cart"></i> 
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
