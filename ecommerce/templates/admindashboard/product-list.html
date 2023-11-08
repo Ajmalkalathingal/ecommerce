@@ -1,0 +1,83 @@
+{% extends 'admindashboard/base.html' %}
+{% load static %}
+
+{% block maincontent %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Product Table</h4>
+
+            <!-- Search Form -->
+            <form method="GET" action="{% url 'admindashboard:list-product' %}" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="text" name="search" placeholder="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+
+            {% if product %}
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Product Image</th>
+                            <th>Selling Price</th>
+                            <th>Discount Rate</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Delete</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in product %}
+                            <tr>
+                                <td>{{ p.title }}</td>
+                                <td>
+                                    <a href="{{ p.product_image.url }}">{{ p.product_image.url }}</a>
+                                </td>
+                                <td>{{ p.selling_price }}</td>
+                                <td>{{ p.discount_rate }}</td>
+                                <td>{{ p.brand }}</td>
+                                <td>{{ p.category }}</td>
+                                <td><a href="{% url 'admindashboard:delete-product' p.id %}"><button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Delete</button></a></td>
+                                <td><a href="{% url 'admindashboard:update' p.id %}"><button class="btn btn-outline-success my-2 my-sm-0" type="submit">Update</button></td>
+                                </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h4>All Products</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Product Image</th>
+                            <th>Selling Price</th>
+                            <th>Discount Rate</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>delete</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in product %}
+                            <tr>
+                                <td>{{ p.title }}</td>
+                                <td>
+                                    <a href="{{ p.product_image.url }}">{{ p.product_image.url }}</a>
+                                </td>
+                                <td>{{ p.selling_price }}</td>
+                                <td>{{ p.discount_rate }}</td>
+                                <td>{{ p.brand }}</td>
+                                <td>{{ p.category }}</td>
+                                <td><a href="{% url 'admindashboard:delete-product' p.id %}"><button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Delete</button></a></td>
+                                <td><a href="{% url 'admindashboard:update' p.id %}"><button class="btn btn-outline-success my-2 my-sm-0" type="submit">Update</button></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock maincontent %}

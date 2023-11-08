@@ -1,0 +1,55 @@
+{% extends 'admindashboard/base.html' %}
+{% load static %}
+
+{% block maincontent %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Add Product</h4>
+            <form method="POST" action="{% url 'admindashboard:update-product' data.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{data.title}}">
+                </div>
+                <div class="form-group">
+                    <label for="product_image">Product Image url:</label><br>
+                    <a href="">{{data.product_image}}</a>
+                    <input type="file" class="form-control-file" id="product_image" name="product_image" value="{{data.product_image}}">
+                </div>
+                <div class="form-group">
+                    <label for="selling_price">Selling Price:</label>
+                    <input type="number" class="form-control" id="selling_price" name="selling_price" value="{{data.selling_price}}">
+                </div>
+                <div class="form-group">
+                    <label for="discount_rate">Discount Rate:</label>
+                    <input type="number" class="form-control" id="discount_rate" name="discount_rate" value="{{data.discount_rate}}">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea class="form-control" id="description" name="description" value="{{data.description}}">{{data.description}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="brand">Brand:</label>
+                    <select class="form-control" id="brand" name="brand">
+                        {% for b in brand %}
+                        <option value="1">{{b.brand_name}}</option>
+                        {% endfor %}
+                        <!-- Add more brand options as needed -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select class="form-control" id="category" name="category">
+                        {% for c in cetogeory %}
+                        <option value="1">{{c.title}}</option>
+                        {% endfor %}
+                        <!-- Add more category options as needed -->
+                    </select>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Update product">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock maincontent %}

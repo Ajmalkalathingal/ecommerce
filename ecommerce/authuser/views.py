@@ -49,9 +49,14 @@ def login_user(request):
         user = authenticate(request, email=email, password=password)
         print(user)
 
-        if user is not None:
+        if user is not None and user.is_superuser:
             login(request, user)
-            return redirect('app:home')
+            return redirect('admindashboard:dashboard')
+        
+        elif user is not None:
+            login(request, user)
+            return redirect('/')
+        
         else:
             messages.warning(request, f'user is not match please create a account ')
 

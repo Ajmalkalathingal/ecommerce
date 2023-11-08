@@ -12,7 +12,6 @@
             <input type="text" class="id_{{p.id}}" value="{{ p.id }}" hidden>
             <input type="text" class="title_{{p.id}}" value="{{ p.title }}" hidden>
             <input type="text" class="image_{{p.id}}" value="{{ p.product_image.url }} " hidden>
-            <input type="number" min="1" class="qty_{{p.id}}" value="1" hidden>
             <h2>{{ p.title }}</h2>
             <hr class="my-3">
             <p class="lead">{{ p.description|truncatechars:150 }}</p>
@@ -28,17 +27,24 @@
                     <button type="button" class="btn btn-secondary mx-1 rounded">S</button>
                     <button type="button" class="btn btn-secondary mx-1 rounded">M</button>
                     <button type="button" class="btn btn-secondary mx-1 rounded">L</button>
-                    <!-- Add more size buttons as needed -->
                 </div>
                 {% endif %}
             </div>
             <div class="mb-4">
                 <label for="qty">Quantity</label>
-                <input type="number" min="1" class="form-control" id="qty" value="1" style="width: 60px;">
+                <input type="number" min="1" class="qty_{{p.id}}" value="1" style="width: 60px;">
+
             </div>
             <div class="mb-4">
-                <button data-index="{{p.id}}" class="add-to-cart btn btn-danger shadow px-5 py-2 me-3" style="border: none; text-decoration: none;">Add to Cart </button>
-                <a href="" class="btn btn-primary shadow px-5 py-2">Buy Now</a>
+                <button data-index="{{p.id}}" class="add-to-cart btn btn-danger shadow px-5 py-2 me-3" style="border: none; text-decoration: none;" id="add-to-cart">Add to Cart </button>
+
+            <!-- product detail page template -->
+            <button style="border: none;" data-wish="{{p.id}}" class=" wishlist  wishlist{{p.id}}">
+                <a href="{% url 'app:add-to-wish-list' %}"><i class="fa-regular fa-heart heart" style="margin-left: 10px;"></i></a>
+              </button>
+
+
+                
             </div>
             <h5 class="mt-4">Available Offers</h5>
             <ul>
@@ -96,7 +102,7 @@
             <h2>Customer Reviews</h2>
             <p class="rating">{{ rating.rating|floatformat:1 }}<i class="fa-sharp fa-solid fa-star text-warning"></i> out of 5</p>
             <div class="comment-list">
-                {% for r in review %}
+                {% for r in reviews_page %}
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">{{ r.user.username }}</h5>
@@ -111,9 +117,34 @@
                 </div>
                 {% endfor %}
             </div>
+
+            <!-- Add dropdown for pagination -->
+            <div class="pagination">
+                <span class="step-links">
+                    {% if reviews_page.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ reviews_page.previous_page_number }}">previous</a>
+                    {% endif %}
+                    
+                    <span class="current-page">{{ reviews_page.number }}</span>
+                    
+                    {% if reviews_page.has_next %}
+                        <a href="?page={{ reviews_page.next_page_number }}">next</a>
+                        <a href="?page={{ reviews_page.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                    
+                    <span class="current-page">Pages: </span>
+                    {% for page_num in reviews_page.paginator.page_range %}
+                        <a href="?page={{ page_num }}">{{ page_num }}</a>
+                    {% endfor %}
+                </span>
+            </div>
+
+            <!-- Display the review form if allowed -->
+            {% if make_review %}
             <div class="container mt-3">
                 <h2>Write a Review</h2>
-                <form method="post" id="review" method="POST" action="{% url 'app:review' p.id %}" class="mt-3">
+                <form method="post" id="review" method="POST" action="{% url 'app:review' p.id %}" class="mt-3 hide-form">
                     {% csrf_token %}
                     <div class="form-group">
                         {{ review_form.review.label_tag }}
@@ -126,6 +157,7 @@
                     <button type="submit" class="btn btn-primary">Submit Review</button>
                 </form>
             </div>
+            {% endif %}
         </div>
         <!-- Category Display List -->
         <div class="col-md-6">
@@ -136,58 +168,53 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-console.log('hello')
-
-const months_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-jQuery(document).ready(function($) {
-    $('#review').submit(function(e) {
-
-        let date = new Date()
-        let time = date.getDay() + ' ' + months_names[date.getUTCMonth()] + ',' + date.getFullYear();
-        e.preventDefault()
-       $.ajax({
-        data : $(this).serialize(),
-
-        method: $(this).attr('method'),
-
-        url: $(this).attr('action'),
-
-        dataType: 'json',
-
-        success: function(response){
-            console.log('data saved in db..')
-            if(response.bool == true){
-                $('#review-res').html('review added')
-                $('.hide-form').hide()
-                $('.remove').hide()
-
-                let _html =  '<div class="col-md-4 text-center mt-5">'
-                    _html+= '<img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAIYAhgMBIgACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAABQYBAgMEB//EADgQAAICAQICBggFAgcAAAAAAAABAgMEBREhMRIiQVFhcQYTIzJSwdHhQoGRofAUsjM1Q3KCkpP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+4gAAAAAAAAAAAAAAAAAAAAAAAAAAAa22QqrlOySjCK3bfYBsyLzdbxsduFftrF8PJfmRGqavZlt10t10eHOXn9CMAkcjW825vozVUe6C+Z4bL7bf8W2c/8AdJs0AGDvVl5NT9nfZHykziAJbG1/Jqe16jdHy2f7fQnMHUsbN4VS2n2wlwf3KaE3FpptNcmnyAvwIHSda6TVGZLi+EbO/wA/qTwAAAAAAAAAqmt6i8u501S9hB/9n3kvr+X/AE2H6uD2st6q27F2/wA8SqgAAAAScmlFNt8EkuZKY2iXWLpXzVS+HbdgRYJ16DVtwvmn4xR4MzS8jFTktrK1zlHmvNAeEAACxaBqLtSxb5bziupJ9q7ium1dkqpxsre0ovdMC+A4YeRHKxa7o8pLiu59qO4AAAAABUtfvd2pTjv1a0oL5/zwI43vn62+yz4pt/qzQAAYAn9DwowqWTYt5y93fsRLGtcVCuMVyjFJGwAANpcwK5rWHHGuVla2rs7PhZHFl1yKlp82+cZJrw47fMrQAAAWD0Xv3hdjyfutTj+fP5fqTxVPR2fQ1OK+ODXz+RawAAAAACgg7Ztfqsy6vbbozZxAGDIAtWFkevxqp98dn5rmd1N7cit6XnvDscZ7umXvJc14oslN1V8OnTNTj3pgZ3b8zV8eaOnA8+Zm04kfaS6/ZBc2B4dev6OLGn8U5b/kv4iAO2Vkzy7nbZzfJLsXccQMgAD36D/m1H/L+1lvKt6NV9LUJT24Qg/34FpAAAAAAKv6SY7qzY3JdW2PHzXD6ESXLVcP+txJVr311oeZTWmm1JbNPZruAGYxc5KME3J8EkuLM1VztsjXXFylJ8EizafgV4cE+ErWutP5LwAjcXRLZpSyJ+rT/CuL+xmzRsimfSxLt/HfoyJ0AQLxdXktnbZ/7fc3p0KT3lkXbSfZDj+7JsAVrM0nIxk5x9rWucorivyPAXQidW0xWRlfjR2muMoL8Xl4gQIB2wsaeXkwphzfN9y7wLB6NY7rxZ3SXG2XDyX33Jg0qrjVVGuC2jFbJeBuAAAAAACB17THLfLx47v/AFIpc/EngBAaDiKul5M117OEd+yP3JU6yqW3USW3Ycnwez4AAAAAAAAzGLk+AFd1nBlXlRnTByVz91L8XgTWj6esGluezun777vA90a4rZtJtdpuAAAAAAAAAAAAxKKlzRkAcnV3P9TV1yO4A8/q5dzMqqXbsdwBzVS7eJ0225AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf//Z" alt="User Image" class="img-fluid img-thumbnail rounded-circle" width="80" height="80">'
-                    _html+='</div>'
-                    _html+='<div class="col-md-8">'
-                    _html+='<div class="card-body custom-card-body">'
-                     _html+='<h5 class="card-title">'+ response.context.user +'</h5>'
-                     _html+='<p class="card-text">'+ response.context.review +'</p>'
-
-                     for(let i=1; i<=response.context.rating; i++){
-
-                        _html+='<i class="fa-sharp fa-solid fa-star text-warning"></i>'
-                     }
-                     _html+='<p class="card-text"><small class="text-body-secondary">'+ time +'</small></p>'                       
-                     _html+='</div>'
-                     _html+= '</div>'
-
-                     $('.comment-list').prepend(_html)
-            }
-        }
-       })
-    });
-});
- 
-
-</script>
 {% endblock main-content %}
 
 
+<!-- <script>
+    <a href="#" class="btn btn-warning buynow" data-id="{{ p.id }}" data-title="{{ p.title }}" data-price="{{ p.discount_rate }}" data-image="{{ p.product_image.url }}">Buy Now</a>
+
+ $(document).ready(function() {
+        $(".buynow").click(function(e) {
+            e.preventDefault();
+
+            // Extract product data from the clicked button
+            var id = $(this).data("id");
+            var title = $(this).data("title");
+            var price = $(this).data("price");
+            var image = $(this).data("image");
+
+            // Prompt the user for the quantity
+            var quantity = prompt("Enter quantity:");
+
+            var productData = {
+                id: id,
+                title: title,
+                price: price,
+                quantity: quantity,
+                image: image,
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "{url 'app:checkout_with_product'}",
+                data: productData,
+                success: function(response) {
+                    console.log(response);
+                },
+            });
+        });
+    });
+
+
+    check out page    
+             <div class="media mb-4">
+              <img src="{{ product.image }}" class="mr-3 rounded-circle" alt="{{ product.title }}" width="80">
+              <div class="media-body">
+                <h5 class="mt-0">{{ product.title }}</h5>
+                <p class="mb-1">{{ product.quantity }}</p>
+                <p class="fw-bold mb-1">Price: ${{ product.price }}</p>
+                <p class="text-muted small">Subtotal: ${{ product.price }}</p>
+              </div>
+            </div>
+</script> -->

@@ -3,27 +3,38 @@
 {% block title %}Home{% endblock title %}
 
 
-{% block navtwo %} 
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+{% block navtwo %}
+<style>
+  a{
+    text-decoration: none;
+  }
+  .bold{
+    font-weight:bold
+  }
+  .rounded{
+    margin: 10px;
+  }
+</style>
+ <nav class="navbar navbar-expand-lg navbar-light bg-light mt-3">
   <div class="container">
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ml-auto">
+          <ul class="navbar-nav ml-auto bold">
               <!-- Use ml-auto to align items to the right -->
-              <li class="nav-item">
+              <li class="nav-item text-primary rounded">
                   <a class="nav-link" href="{% url 'app:category' %}">All categories</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item text-primary rounded text-light">
                   <a class="nav-link" href="{% url 'app:product_list' %}">All products</a>
               </li>
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                   <a class="nav-link" href="{% url 'app:store' %}">Filter</a>
-              </li>
-              <li class="nav-item dropdown">
+              </li> -->
+              <li class="nav-item dropdown text-primary rounded text-white">
                   <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton" role="button"
                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Category
@@ -34,56 +45,6 @@
                       {% endfor %}
                   </div>
               </li>
-
-              <!-- Modify the "Shop" link to include a dropdown
-              <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="shopDropdown" role="button"
-                      data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Shop
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="shopDropdown">
-                      <div class="container" style="width: 600px;">
-                          <div class="row">
-                              <div class="col-md-3">
-                                  <div class="card" style="width: 18rem">
-                                      <div class="card-body">
-                                          <h2 class="card-title">By Categories</h2>
-                                          {% for c in categories %}
-                                          <input type="checkbox" class="filter-checkbox" value="{{c.id}}"
-                                              data-filter="category" name="checkbox" />
-                                          <span>
-                                              <a href="#">
-                                                  <img src="{{ c.image.url }}" height="30" width="30"
-                                                      class="rounded-circle" alt="" />
-                                              </a>
-                                          </span>
-                                          <span>{{c.title}}</span><br /><br />
-                                          {% endfor %}
-                                      </div>
-                                  </div>
-                              </div>
-                              <div class="col-md-3 container">
-                                  <div class="card" style="width: 18rem">
-                                      <div class="card-body">
-                                          <h2 class="card-title">By Brand</h2><br>
-                                          {% for b in brand %}
-                                          <input type="checkbox" class="filter-checkbox" value="{{b.id}}"
-                                              data-filter="brand" name="checkbox" />
-                                          <span>
-                                              <a href="#">
-                                                  <img src="{{ b.image.url }}" height="30" width="30"
-                                                      class="rounded-circle" alt="" />
-                                              </a>
-                                          </span>
-                                          <span>{{b.brand_name}}</span><br /><br />
-                                          {% endfor %}
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </li> -->
           </ul>
       </div>
   </div>
@@ -91,7 +52,37 @@
 {% endblock navtwo %} 
 
 {% block banner_slider %}
-<!--Banner Slider-->
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-3">
+  <div>
+    <div class="card-body">
+      <h2 class="card-title bg-primary text-light rounded text-center">categories</h2>
+      {% for c in categories %}
+      <div class="card m-1">
+        <div class="card-body">
+          <span>  <a href="{% url 'app:category_product_list' c.cid %}"><img src="{{ c.image.url }}" height="30" width="30" class="rounded-circle" alt=""></span> <span>{{c.title}}</span></a><br>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div>
+    <div class="card-body">
+      <h2 class="card-title bg-primary text-light rounded text-center">Brand</h2>
+      {% for b in brand %}
+      <div class="card m-1">
+        <div class="card-body">
+          <span>  <a href="{% url 'app:brand_product_list' b.id %}"><img src="{{ b.image.url }}" height="30" width="30" class="rounded-circle" alt=""></span> <span>{{b.brand_name}}</span></a><br>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+    <div class="col-md-9">
+      <!--Banner Slider-->
  <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner ">
     <div class="carousel-item active">
@@ -117,19 +108,13 @@
   </a>
 </div>
 <!-- End Banner Slider -->
+    </div>
+  </div>
+</div>
+
 {% endblock banner_slider %}
 
-{% block livesale %}
-<!-- Live Sale Section -->
-<!-- <div class="container">
-  <div class="row bg-danger text-center p-5 text-white border-bottom shadow">
-    <h1>SALE IS LIVE NOW</h1>
-    <span>5% Instant Discount on Axis Bank Credit and Debit Card</span>
-    <small class="fw-lighter">Term and Condition Applied (For details visit Bank's official Website)</small>
-  </div>
-</div>  -->
-<!-- End Live Sale Section -->
-{% endblock livesale %}
+
 
 {% block main-content %}
 <!-- 1st Product Slider -->
@@ -153,9 +138,7 @@
             <span class="fw-bold">Price: <i class="fa-solid fa-indian-rupee-sign"></i> {{ p.selling_price }}</span>
             <a href="{% url 'app:productdetail' p.id %}" class="btn btn-primary">View Details</a>
 
-            <a href="{% url 'app:add-to-cart' %}">
-              <i class="fas fa-shopping-cart"></i> 
-            </a>
+
           </div>
         </div>
       </div>
@@ -167,154 +150,5 @@
 <!-- End 1st Product Slider -->
 
 <!-- Payment Info Section -->
-<div class="container my-5">
- <div class="row">
-  <div class="col-sm-3">
-   <div class="card mb-3">
-     <div class="card-body">
-     <img src="{% static 'app/images/payavail/cc.jpg' %}" alt="" srcset="" class="img-fluid">
-     </div>
-   </div>
-  </div>
-  <div class="col-sm-3">
-   <div class="card mb-3">
-     <div class="card-body">
-      <img src="{% static 'app/images/payavail/upi.jpg' %}" alt="" srcset="" class="img-fluid">
-     </div>
-   </div>
-  </div>
-  <div class="col-sm-3">
-   <div class="card mb-3">
-     <div class="card-body">
-      <img src="{% static 'app/images/payavail/nb.jpg' %}" alt="" srcset="" class="img-fluid">
-     </div>
-   </div>
-  </div>
-  <div class="col-sm-3">
-   <div class="card mb-3">
-     <div class="card-body">
-      <img src="{% static 'app/images/payavail/bj.jpg' %}" alt="" srcset="" class="img-fluid">
-     </div>
-   </div>
-  </div>
- </div>
-</div>
-<!-- End Payment Info Section -->
 
-<!-- 2nd Product Slider -->
-<div class="m-3">
-  <h2>ShoppingX Deals of The Day</h2>
-  <!-- Slider 1 -->
- 
- <div class="container my-5">
-  <div class="row">
-   <div class="col-sm-3">
-    <div class="card mb-3">
-      <div class="card-body">
-       <a href="" class="btn">
-       <div class="item"><img src="{% static 'app/images/product/2.jpg' %}" alt="" height="200px">
-         <span class="fw-bold">Product 2</span><br><span class="fs-5">Rs. 300</span></div></a>
-      </div>
-    </div>
-   </div>
- 
-   <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/3.jpg' %}" alt="" height="200px">
-         <span class="fw-bold">Product 2</span><br><span class="fs-5">Rs. 300</span></div>
-       </div>
-     </div>
-    </div>
- 
-    <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/4.jpg' %}" alt="" height="200px">
-         <span class="fw-bold">Product 2</span><br><span class="fs-5">Rs. 300</span></div>
-       </div>
-     </div>
-    </div>
- 
-    <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/5.jpg' %}" alt="" height="200px">
-         <span class="fw-bold">Product 2</span><br><span class="fs-5">Rs. 300</span></div>
-       </div>
-     </div>
-    </div>
- 
-    <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/6.jpg' %}" alt="" height="200px">
-         <span class="fw-bold">Product 2</span><br><span class="fs-5">Rs. 300</span></div>
-       </div>
-     </div>
-    </div>
- 
-    <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/7.jpg' %}" alt="" height="200px">
-         <span class="fw-bold">Product 2</span><br><span class="fs-5">Rs. 300</span></div>
-       </div>
-     </div>
-    </div>
- 
-    <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/8.jpg' %}" alt="" height="200px">
-         <span class="fw-bold">Product 2</span><br><span class="fs-5">Rs. 300</span></div>
-       </div>
-     </div>
-    </div>
- 
-    <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/9.jpg' %}" alt="" height="200px">
-         <span class="fw-bold">Product 2</span><br><span class="fs-5">Rs. 300</span></div>
-       </div>
-     </div>
-    </div>
- 
-    <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/10.jpg' %}" alt="" height="200px">
-           <span class="fw-bold">Product 10</span><br><span class="fs-5">Rs. 900</span></div>
-         
-       </div>
-     </div>
-    </div>
- 
-    <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/11.jpg' %}" alt="" height="200px">
-           <span class="fw-bold">Product 11</span><br><span class="fs-5">Rs. 100</span></div>
-       </div>
-     </div>
-    </div>
- 
-    <div class="col-sm-3">
-     <div class="card mb-3">
-       <div class="card-body">
-         <div class="item"><img src="{% static 'app/images/product/12.jpg' %}" alt="" height="200px">
-           <span class="fw-bold">Product 12</span><br><span class="fs-5">Rs. 200</span></div>
-       </div>
-     </div>
-    </div>
-   </div>
-   </div>
-   </div>
- <!-- End 1st Product Slider -->
- 
- <!-- Payment Info Section -->
- 
-   
-<!-- End 2nd Product Slider -->
  {% endblock main-content %}

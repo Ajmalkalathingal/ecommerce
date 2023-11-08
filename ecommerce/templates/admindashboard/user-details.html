@@ -1,0 +1,44 @@
+{% extends 'admindashboard/base.html' %}
+{% load static %}
+
+{% block maincontent %}
+<div class="container mt-4">
+    <div class=" row">
+        <div class="col-md-8">
+                    <h4>Order Details</h4>
+                    <table class="table table-stripeds table-bordereds">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>image</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>paid status</th>
+                                <th>payment mode</th>
+                                <th>order date</th>
+                                <th>status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="mt-3">
+                            {% for item in order_product %}
+
+                            <tr >
+                                <td>{{ item.item }}</td>
+                                <td><img src="{{ item.image }}" class="mr-3 " alt="{{ item.title }}" width="80"></td>
+                                <td>{{item.qty}}</td>
+                                <td>{{item.order.price }}</td>
+                                <td>{{ item.order.paid_status }}</td>
+                                <td>{{ item.order.payment_mode }}</td>
+                                <td>{{ item.order.orderd_date }}</td>
+                                <td>{{ item.order.status }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                <div class="text-center mt-4">
+                    <a href="{% url 'app:home' %}" class="btn btn-primary">Back to usepage</a>
+
+        </div>
+    </div>
+</div>
+{% endblock maincontent %}

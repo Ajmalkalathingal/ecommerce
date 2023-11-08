@@ -22,6 +22,7 @@
                       <p class="card-text"> Quantity : {{ item.qty }}</p>
                       <p class="card-text"> Total Price : {{ item.total }}</p>
                       <p class="card-text"> Paid Amount : {{ item.order.price }}</p>
+                      <p class="card-text"> Paid Amount : {{ item.order.payment_mode }}</p>
                       <p class="card-text"> Paid Status : {{ item.order.paid_status }}</p>
                       <p class="card-text"> Ordered Date : {{ item.order.orderd_date }}</p>
                       <p class="card-text"> Status : {{ item.order.status }}</p>
@@ -33,5 +34,20 @@
             {% endfor %}
         </div>
     </div>
+</div>
+
+<div class="card mt-3 no-hover-card">
+  <div class="row no-gutters">
+      <div class="col-md-8">
+          <div class="card-body details">
+              <h5 class="card-title">{{ address.name }}</h5>
+              <p class="card-text"><strong>Address:</strong> {{ address.address }}</p>
+              <p class="card-text"><strong>Phone:</strong> {{ address.phone }}</p>
+              <p class="card-text"><strong>City:</strong> {{ address.city }}</p>
+              <p class="card-text"><strong>Zip Code:</strong> {{ address.zipcode }}</p>
+              <p class="card-text"><strong>State:</strong> {{ address.state }}</p>
+          </div>
+      </div>
+  </div>
 </div>
 {% endblock %}

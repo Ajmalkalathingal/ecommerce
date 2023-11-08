@@ -12,6 +12,7 @@ urlpatterns = [
     path('product/', views.product_list_view, name='product_list'),
     path('category/', views.category_list_view, name='category'),
     path('category/<cid>/', views.category_product_list, name='category_product_list'),
+    path('brand/<id>/', views.brand_product_list, name='brand_product_list'),
 
     # prodcut details
     path('product-details/<id>/',views.product_datail_view, name='productdetail'),
@@ -31,7 +32,6 @@ urlpatterns = [
 
     # add to cart
     path('add-to-cart/', views.add_to_cart, name='add-to-cart'),
-
     path('cart/', views.cart, name='cart'),
 
     #remove from cart
@@ -39,21 +39,34 @@ urlpatterns = [
 
     # refresh from cart
     path('refresh-from-cart/', views.refresh_from_cart, name='refresh-from-cart'),
+    
+    # add to wish list
+    path('add-to-wish-list/', views.add_to_wish_list, name='add-to-wish-list'),
+    path('wish-list/', views.wish_list, name='wish-list'),
+    path('delete-wish-list/<int:id>', views.delete_wish_list, name='delete-wish-list'),
+
 
     # checkout page
     path('checkout/', views.check_out_page, name='checkout'),
-
+    path('checkout/<int:id>/', views.check_out_page, name='checkout_with_product'),
 
     # payment
+    path('process-payment', views.process_payment, name='process-payment'),
+    path('payment-proceed/', views.razorpay_total, name='payment-proceed'),
+
+
+
     path('paypal/', include("paypal.standard.ipn.urls"),name='paypal-ipn'),
-    path('complete/', views.payment_complete, name='payment-complete'),
+    path('payment-complete/', views.order, name='payment-complete'),
     path('cancel/', views.payment_cancel, name='payment-cancel'),
     
 
     # dash bord
     path('dashbord/', views.customer_dash_bord, name='dashbord'),
-    path('orders/', views.customer_order, name='orders'),
     path('orders/<int:id>', views.order_details, name='orders-details'),
+    
+    # make_dafault_address
+    path('make-default-address/',views.make_dafault_address, name='make-default-address'),
 
 
 
@@ -74,13 +87,12 @@ urlpatterns = [
 
 
     # path('cart/', views.add_to_cart, name='add-to-cart'),
-    path('buy/', views.buy_now, name='buy-now'),
-    path('profile/', views.profile, name='profile'),
-    path('address/', views.address, name='address'),
-    path('orders/', views.orders, name='orders'),
-    path('changepassword/', views.change_password, name='changepassword'),
-    path('mobile/', views.mobile, name='mobile'),
-    path('registration/', views.customerregistration, name='customerregistration'),
+    # path('buy/', views.buy_now, name='buy-now'),
+    # path('profile/', views.profile, name='profile'),
+    # # path('orders/', views.orders, name='orders'),
+    # path('changepassword/', views.change_password, name='changepassword'),
+    # path('mobile/', views.mobile, name='mobile'),
+    # path('registration/', views.customerregistration, name='customerregistration'),
 
     # path('', views.home, name='home'),
     # # path('',views.ProductView.as_view(),name='home'),

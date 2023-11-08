@@ -7,34 +7,15 @@
     text-decoration: none;
     color: black;
   }
+
   .card-title {
     margin-bottom: 20px;
   }
   .filter input {
     width: 100%;
   }
-  input[type="range"] {
-  width: 100%;
-  height: 20px;
-  /* Set the background color for the track */
-  /* background: linear-gradient(to right, #FF5733 0%, #FF5733 100%); */
-  /* Remove the default styling */
-  border: none;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-}
 
-/* Style the slider thumb (the draggable part) */
-input[type="range"]::-webkit-slider-thumb {
-  width: 20px;
-  height: 20px;
-  /* background-color: #FF5733; */
-  cursor: pointer;
-  /* Add a border to the thumb if needed */
-  border: 2px solid white;
-  border-radius: 50%;
-}
+
 </style>
 
 <div class="container mt-5">
@@ -44,7 +25,7 @@ input[type="range"]::-webkit-slider-thumb {
         <div class="card-body">
           <h2 class="card-title">By Cetegories</h2>
           {% for c in cetogory %}
-            <input type="checkbox" class="filter-checkbox" value="{{c.id}}" data-filter="cetogory" name="checkbox"> <span> <a href=""><img src="{{ c.image.url }}" height="30" width="30" class=" rounded-circle" alt=""></span> <span>{{c.title}}</span></a><br><br>
+            <input type="checkbox" class="filter-checkbox" value="{{c.id}}" data-filter="cetogory" name="checkbox"> <span> <a href=""><img src="{{ c.image.url }}" height="30" width="30" class=" rounded-circle" alt=""></span> <span>{{c.title}}</span></a><br>
           {% endfor %}
         </div>
       </div>
@@ -54,7 +35,7 @@ input[type="range"]::-webkit-slider-thumb {
         <div class="card-body">
           <h2 class="card-title">By brand</h2>
           {% for c in brand %}
-            <input type="checkbox" class="filter-checkbox" value="{{c.id}}" data-filter="brand" name="checkbox"> <span> <a href=""><img src="{{ c.image.url }}" height="30" width="30" class=" rounded-circle" alt=""></span> <span>{{c.brand_name}}</span></a><br><br>
+            <input type="checkbox" class="filter-checkbox" value="{{c.id}}" data-filter="brand" name="checkbox"> <span> <a href=""><img src="{{ c.image.url }}" height="30" width="30" class=" rounded-circle" alt=""></span> <span>{{c.brand_name}}</span></a><br>
           {% endfor %}
         </div>
       </div>
@@ -62,12 +43,12 @@ input[type="range"]::-webkit-slider-thumb {
     <div class="col-md-3 mb-3">
       <div class="card" style="width: 18rem;">
         <div class="card-body filter">
-          <h2 class="card-title">Price range</h2>         
-            <input style="width: 100%;border-radius: 8px;background-color: greenyellow;" type="range" min="{{max_min_price.selling_price__min}}" max="{{max_min_price.selling_price__max}}" id="range" oninput="max_price.value=this.value" value="{{max_min_price.selling_price__min}}">
-              <span>from {{max_min_price.selling_price__min|floatformat}}</span>
-              <span style="position: absolute; right: 0; margin-right: 15px;">to {{max_min_price.selling_price__max|floatformat}}</span> <br>
-              <input style="border-radius: 8px;border-color: greenyellow;" type="number" min="{{max_min_price.selling_price__min}}" max="{{max_min_price.selling_price__max}}" id="max_value" value="{{max_min_price.selling_price__min}}" onkeyup="range.value=this.value"><br>
-              <input type="button" class="btn btn-success mt-4" value="Submit" id="filter-button">
+          <h2 class="card-title">Price range</h2>
+          <input class="bg-primary" style="width: 100%; border-radius: 8px;" type="range" min="{{max_min_price.selling_price__min}}" max="{{max_min_price.selling_price__max}}" id="range" oninput="updateNumberInput(this.value)" value="{{max_min_price.selling_price__min}}">
+          <span>from {{max_min_price.selling_price__min|floatformat}}</span>
+          <span style="position: absolute; right: 0; margin-right: 15px;">to {{max_min_price.selling_price__max|floatformat}}</span> <br>
+          <input style="border-radius: 8px; border-color: greenyellow;" type="number" min="{{max_min_price.selling_price__min}}" max="{{max_min_price.selling_price__max}}" id="max_value" value="{{max_min_price.selling_price__min}}" oninput="updateRangeInput(this.value)"><br>
+          <input type="button" class="btn btn-primary mt-4" value="Submit" id="filter-button">
         </div>
       </div>
     </div>
@@ -85,23 +66,37 @@ input[type="range"]::-webkit-slider-thumb {
     {% for p in product %}
     <div class="col-md-3 mb-4">
       <div class="card">
-        <img src="{{ p.product_image.url }}"  class="card-img-top">
+        <img src="{{ p.product_image.url }}" class="card-img-top">
         <div class="card-body">
           <h5 class="card-title">{{ p.title }}</h5>
           <p class="card-text">{{ p.description|truncatechars:50 }}</p>
         </div>
         <div class="card-footer">
-          <div class="d-flex justify-content-between">
-            <span class="fw-bold">Price: <i class="fa-solid fa-indian-rupee-sign"></i> {{ p.selling_price }}</span>
-            <a href="{% url 'app:productdetail' p.id %}" class="btn btn-primary">View Details</a>
-
-            <a href="{% url 'app:add-to-cart' %}">
-              <i class="fas fa-shopping-cart"></i> 
-            </a>
+          <div class="d-flex justify-content-between align-items-center"> <!-- Added align-items-center -->
+            <div>
+              <span class="fw-bold price_{{p.id}}">Price: <i class="fa-solid fa-indian-rupee-sign "></i> {{ p.selling_price }}</span>
+              <a href="{% url 'app:productdetail' p.id %}" class="btn btn-primary mt-1">View Details</a>
+            </div>
+            <div style="display: flex; align-items: center;">
+              <input type="text" class="id_{{p.id}}" value="{{ p.id }}" hidden>
+                <input type="text" class="title_{{p.id}}" value="{{ p.title }}" hidden>
+                <input type="text" class="image_{{p.id}}" value="{{ p.product_image.url }} " hidden>
+                <input type="number" min="1" class="qty_{{p.id}}" value="1" hidden>
+    
+              <button style="border: none;" data-index="{{p.id}}" class="add-to-cart">
+                <a href="{% url 'app:add-to-cart' %}">
+                  <i class="fas fa-shopping-cart"></i>
+                </a>
+              </button>
+              <button style="border: none;" data-wish="{{p.id}}" class=" wishlist wishlist{{p.id}}">
+                <a href="{% url 'app:add-to-wish-list' %}"><i class="fa-regular fa-heart heart" style="margin-left: 10px;"></i></a>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    
     {% endfor %}
   </div>
 </div>
@@ -110,6 +105,22 @@ input[type="range"]::-webkit-slider-thumb {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+
+function updateNumberInput(value) {
+    document.getElementById('max_value').value = value;
+  }
+
+  function updateRangeInput(value) {
+    document.getElementById('range').value = value;
+  }
+
+  document.getElementById('filter-button').addEventListener('click', function() {
+    // Handle filter logic here
+    var minPrice = document.getElementById('range').value;
+    var maxPrice = document.getElementById('max_value').value;
+    // You can use minPrice and maxPrice to filter your products and make an AJAX request to update the product list.
+    // Alternatively, you can submit a form with these values to your server for processing.
+  });
  
  $(document).ready(function(){
   $('.filter-checkbox, #filter-button').on('click', function(){

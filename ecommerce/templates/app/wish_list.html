@@ -1,0 +1,45 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Login{% endblock title %}
+{% block main-content %}
+<style>
+    .table-spacing td {
+    padding: 20px;
+}
+</style>
+<div class="container mt-4">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card shadow">
+          <div class="card-body">
+            <h4 class="card-title text-primary">Wish list</h4>
+            <hr>
+                <table class="table table-stripeds table-bordereds text-center">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Details</th>
+                      <th>Delete</th>
+                    </tr>
+                    {% for item in wish_list_items %}
+                    <tr>
+                      <td>
+                        <img src="{{ item.product.product_image.url }}"  alt="{{ item.title }}" height="50px" class="me-2" width="50px">
+                        {{ item.product.title }}</td>
+                      <td>{{ item.product.discount_rate }}</td>
+                      <td>{{item.product.qty}}</td>
+                      <td><a href="{% url 'app:productdetail' item.product.id %}" class="btn btn-primary">View Details</a></td>
+                      <td><a href="{% url 'app:delete-wish-list' item.product.id  %}"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                  </thead>
+                </table>
+                  </div>
+                </div>
+          </div>
+    </div>
+  </div>
+  
+{% endblock %}

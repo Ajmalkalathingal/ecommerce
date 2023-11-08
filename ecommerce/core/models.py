@@ -27,13 +27,15 @@ class Cetogeory(models.Model):
     def __str__(self):
         return self.title
 
-class Customer(models.Model):
+class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100)
-    locality = models.CharField(max_length=100)
+    address = models.CharField(max_length=100)
+    phone = models.CharField(max_length=100,null=True)
     city = models.CharField(max_length=100)
     zipcode = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
+    status = models.BooleanField(default=False,)
 
     def __str__(self):
         return self.name
@@ -46,6 +48,9 @@ class Product(models.Model):
     description = models.TextField()
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Cetogeory, on_delete=models.SET_NULL, null=True, related_name='category')
+    qty = models.IntegerField(default=1, null=True)
+    
+
 
     tag = TaggableManager(blank=True)
   
@@ -71,7 +76,13 @@ STATUS_CHOICE = (
 
 class CartOrder(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
+
+
     price = models.DecimalField(max_digits=9999999, decimal_places=2)
+    payment_mode = models.CharField(max_length=100, null=True)
+    payment_id = models.CharField(max_length=100, null=True) 
     paid_status = models.BooleanField(default=False)
     orderd_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=100, choices=STATUS_CHOICE, default='pending') 
@@ -98,8 +109,6 @@ class CartItem(models.Model):
     def total_price(self):
         return self.product.discount_rate * self.quantity
     
-       
-
 
 # rating product
 RATING = (
@@ -117,3 +126,8 @@ class ProductReview(models.Model):
     rating = models.IntegerField(choices=RATING, default=None)
     date = models.DateTimeField(auto_now_add=True)
  
+
+class WishList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    status = models.BooleanField(default=True, null=True)

@@ -6,37 +6,44 @@
   }
 </style>
 <div class="container my-5" id="remove-cart">
-  <h2>Your Cart</h2>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Image</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>Total</th>
-        <th>Refresh</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in cart_items %}
-      <tr>
-        <td>{{ item.product.title }}</td>
-        <td><img src="{{ item.product.product_image.url }}" height="30" width="30" class="rounded-circle" alt=""></td>
-        <td>{{ item.product.discount_rate }}</td>
-        <td><input type="number" value="{{ item.quantity }}" class="quantity-input" min="1"></td>
-        <td>{{ item.total_price }}</td>
-        <td><button class="btn btn-danger btn-sm refresh-button" data-id="{{ item.id }}" data-qty="{{ item.quantity }}">Refresh</button></td>
-        <td><button class="btn btn-danger btn-sm remove-button" data-id="{{ item.id }}" data-qty="{{ item.quantity }}">Remove</button></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <div class="text-center">
-    <h4>Total: {{ cart_total }}</h4>
-    <a href="{% url 'app:checkout' %}" class="btn btn-success btn-lg">Proceed to Checkout</a>
+  <div class="col-md-12">
+    <div class="card-shadow">
+      <div class="card-body">
+        <h2 class=" card-title text-primary">Your Cart</h2>
+        <table class="table text-center table-stripeds table-bordereds">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Image</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
+              <th>Refresh</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart_items %}
+            <tr>
+              <td>{{ item.product.title }}</td>
+              <td><img src="{{ item.product.product_image.url }}" height="50px" width="50px"  alt=""></td>
+              <td>{{ item.product.discount_rate }}</td>
+              <td><input type="number" value="{{ item.quantity }}" class="quantity-input" min="1"></td>
+              <td>{{ item.total_price }}</td>
+              <td><button class="btn btn-success btn-sm refresh-button" data-id="{{ item.id }}" data-qty="{{ item.quantity }}">Refresh</button></td>
+              <td><button class="btn btn-danger btn-sm remove-button" data-id="{{ item.id }}" data-qty="{{ item.quantity }}">Remove</button></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="text-center">
+          <h4 class="text-danger">Total: {{ cart_total }}</h4>
+          <a href="{% url 'app:checkout' %}" class="btn btn-primary btn-lg">Proceed to Checkout</a>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -28,10 +28,7 @@
 </head>
 
 <style type="text/css">
-    li:hover{
-        background: black;
-        border-radius: 10px;
-    }
+  
     /* ============ only desktop view ============ */
     @media all and (min-width: 992px) {
         .navbar .nav-item .dropdown-menu {
@@ -42,9 +39,9 @@
             margin-top: 0;
         }
 
-        .navbar .nav-item:hover .nav-link {
+        /* .navbar .nav-item:hover .nav-link {
             color: #fff;
-        }
+        } */
 
         .navbar .dropdown-menu.fade-down {
             top: 80%;
@@ -74,8 +71,8 @@
             <a class="navbar-brand" href="/">Shopping Cart</a>
             <div class="d-flex align-items-center" id="navbarSupportedContent">
                 <form class="d-flex ms-auto" action="{% url 'app:search' %}" method="GET">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" size="50"
-                        name="q" />
+                    <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" size="50"
+                        name="q" /> -->
                     <button class="btn btn-warning" type="submit">Search</button>
                 </form>
                 <div>
@@ -96,7 +93,12 @@
                         </li>
                         <li class="nav-item mx-2">
                             <a href="{% url 'app:cart' %}" class="nav-link text-white"><span
-                                    class="badge bg-danger " id="iteam-count">{{request.session.cart_data_obj|length}}</span> Cart
+                                    class="badge bg-danger " id="item-count">{{ cart_count}}</span>Cart
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a href="{% url 'app:wish-list' %}" class="nav-link text-white"><span
+                                    class="badge bg-danger " id="wishitem">{{ wish_list_count}}</span><i class="fa-regular fa-heart heart"></i>
                             </a>
                         </li>
                         {% if not request.user.is_authenticated %}
@@ -141,59 +143,12 @@
     <script src="{% static 'app/js/owl.carousel.min.js' %}"></script>
     <script src="{% static 'app/js/all.min.js' %}"></script>
     <script src="{% static 'app/js/myscript.js' %}"></script>
+    <script src="{% static 'app/js/main.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-<script>
-    //   add to cart
-$(document).ready(function () {
-    $('.add-to-cart').on('click', function (e) {
-        e.preventDefault();
 
-        let this_val = $(this)
-        let index = this_val.attr('data-index')
-
-        let productId = $('.id_' + index).val();
-        let title = $('.title_' + index).val();
-        let price = $('.price_' + index).text();
-        let qty = $('.qty_' + index).val();
-        let image = $('.image_' + index).val();
-
-        console.log('ID:', productId);
-        console.log('Title:', title);
-        console.log('Price:', price);      
-        console.log('Qty:', qty);
-
-
-        $.ajax({
-            url: '/add-to-cart/',
-            method: 'GET',  // Adjust the method as needed
-            data: {
-                'id': productId,
-                'title': title,
-                'price': price,
-                'qty': qty,
-                'image': image,
-            },
-            dataType: 'json',
-            success: function (response) {
-                if (response.data) {
-
-                    console.log('Item added to cart');
-                    console.log('Cart data:', response.data);
-                    $('#add-to-cart').html('Item added');
-                    $('#item-count').text(response.total_item);
-                } 
-                else {
-
-                    console.error('Error adding item to cart');
-                }
-            },
-        });
-    });
-});
-</script>
 </body>
 
 </html>

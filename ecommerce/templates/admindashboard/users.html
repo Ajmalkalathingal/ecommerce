@@ -1,0 +1,46 @@
+{% extends 'admindashboard/base.html' %}
+{% load static %}
+
+{% block maincontent %}
+
+<div class="col-md-12 text-center mt-4">
+    <div class="card shadow">
+      <div class="card-body">
+        <h4 class="card-title text-primary">User details</h4>
+        <hr>
+            <table class="table table-stripeds table-bordereds">
+              <thead>
+                <tr>
+                  <th>SL NO</th>
+                  <th>Use name</th>
+                  <th>Email</th>
+                  <th>Date of join</th>
+                  <th>Last date of log-in</th>
+                  <th>Order Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                <tr>
+                  {% for i in user %}
+                  <td>{{forloop.counter}}</td>
+                  <td>{{i.username}}</td>
+                  <td>{{i.email}}</td>
+                  <td>{{i.date_joined}}</td>
+                  <td>{{i.last_login}}</td>
+                  <td><a href="{% url 'admindashboard:user-details' i.id %}"><button class="btn btn-primary ">view detail</button></a></td>
+                </tr>
+               {% endfor %}
+              </tbody>
+            </table>
+            <h4 class="fw-bold text-end">
+            
+            </h4>
+
+        
+            
+      </div>
+    </div>
+    </div>
+
+{% endblock maincontent %}

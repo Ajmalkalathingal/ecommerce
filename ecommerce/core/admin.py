@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import(Customer, Product, CartOrder,Brand,Cetogeory,ProductReview,CartItem,CartOrderProduct)
+from .models import(Address, Product, CartOrder,Brand,Cetogeory,ProductReview,CartItem,CartOrderProduct,WishList)
 
-@admin.register(Customer)
-class CustomerModelAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'name', 'locality','city','zipcode', 'state']
+@admin.register(Address)
+class AddressModelAdmin(admin.ModelAdmin):
+    list_editable = ['status']
+    list_display = ['id', 'user', 'name', 'address','city','zipcode', 'state','status']
 
 @admin.register(Product)
 class ProductModleAdmin(admin.ModelAdmin):
@@ -32,4 +33,5 @@ class BrandviewAdminModel(admin.ModelAdmin):
            
 
 admin.site.register(CartItem)           
+admin.site.register(WishList)           
            

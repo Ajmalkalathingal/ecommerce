@@ -1,0 +1,93 @@
+{% extends 'admindashboard/base.html' %}
+{% load static %}
+
+    {% block maincontent %}
+    <style>
+      .dash ul li{
+        margin: 20px;
+      }
+      .dash li a{
+        color: #fff;
+      }
+    </style>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Sidebar for Reports and Products -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-primary text-white sidebar text-center pt-5 " style="min-height: 100vh;">
+                <div class="position-sticky mt-5 dash">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'admindashboard:users' %}">
+                                registered User
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admindashboard:list-product' %}">
+                                Products List
+                            </a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admindashboard:add-product' %}">
+                                Add Product
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Cetogory
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Brand
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Reviews
+                            </a>
+                        </li>
+                        <!-- Add more menu items for reports and products here -->
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Center Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-5 ">
+                <div class="d-flex justify-content-center align-items-center flex-wrap flex-md-nowrap pt-3 pb-2 mb-3 border-bottom">
+                    <!-- Display Data, Reports, and Product Information Here -->
+                    <div class="data-report-product card-section">
+                        <div class="row">
+                            <div class="col-sm-6">
+                              <div class="card">
+                                <div class="card-body">
+                                  <h5 class="card-title">Registerd User</h5>
+                                  <p class="card-text">total number of user registered {{usercount}}</p>
+                                  <a href="{% url 'admindashboard:users' %}" class="btn btn-primary">view users</a>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-6">
+                              <div class="card">
+                                <div class="card-body">
+                                  <h5 class="card-title">Total number of product</h5>
+                                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                  <a href="{% url 'admindashboard:list-product' %}" class="btn btn-primary">View Product</a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        <!-- Add your data, reports, and product content here -->
+                        <h1>Data and Reports</h1>
+                        <p>This is where you can display your data, reports, and product information.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    {% endblock maincontent %}
+
+    <!-- Add Bootstrap JS and jQuery script links here -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

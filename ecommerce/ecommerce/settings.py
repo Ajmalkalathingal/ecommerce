@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     #apps
     'core',
     'authuser',
+    'admindashboard'
 ]
 
 MIDDLEWARE = [
@@ -149,5 +150,5 @@ LOGIN_URL = 'auth:login'
 
 
 
-PAYPAL_RECEIVER_EMAIL = 'ajmalbusinessaccount@gmail.com'
+PAYPAL_RECEIVER_EMAIL = 'sb-vrvaf27300080@business.example.com'
 PAYPAL_TEST = True

@@ -8,8 +8,8 @@ from django.db.models import Count,Avg
 from django.shortcuts import get_object_or_404
 from .forms import ProductReviewForm
 
-from django.core import serializers
-import json
+# from django.core import serializers
+# import json
 
 from django.urls import reverse
 from django.conf import settings
@@ -22,16 +22,6 @@ from . import views
 from taggit.models import Tag
 
 from .models import *
-
-# def home(request):
-#     product = Product.objects.filter(featured=True)
-
-#     context = {
-#          'product':product
-#         }
-#     return render(request, 'app/home.html',context)
-     
-
 
 class ProductView(View):
     def get(self, request):
@@ -74,44 +64,65 @@ def category_product_list(request,cid):
 
   return render(request, 'app/category_list_view.html', context)
 
-
-def product_datail_view(request, id):
-  
-  product = Product.objects.get(id=id)
-  # product = get_object_or_404(Product,id=id)
-
-  # related product
-  products = Product.objects.filter(category= product.category).exclude(id=id)[:10]
-
-  # review
-  review = ProductReview.objects.filter(product=product).order_by('-date')
-
-  # review rating
-  average_rating = ProductReview.objects.filter(product=product).aggregate(rating=Avg('rating'))
-
-  # review form
-  review_form = ProductReviewForm()
-
-  # make review
-  make_review = True
-  if request.user.is_authenticated:
-      user_review_count = ProductReview.objects.filter(user=request.user, product=product).count()
-  
-      if user_review_count > 0:
-        make_review = False
-
-
-  
+def brand_product_list(request,id):
+  brand = Brand.objects.get(id=id)
+  product = Product.objects.filter(brand=brand)
 
   context = {
-    'p':product,
-    'products': products,
-    'review': review,
-    'rating': average_rating,
-    'review_form': review_form,
-    'make_review': make_review
+    'brand': brand,
+    'product' : product,
   }
-  return render(request,'app/productdetail.html',context)
+
+  return render(request, 'app/brand-list.html', context)
+
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+def product_datail_view(request, id):
+    product = Product.objects.get(id=id)
+
+    # related product
+    products = Product.objects.filter(category=product.category).exclude(id=id)[:10]
+
+    # review
+    review = ProductReview.objects.filter(product=product).order_by('-date')
+
+    # review rating
+    average_rating = ProductReview.objects.filter(product=product).aggregate(rating=Avg('rating'))
+
+    # review form
+    review_form = ProductReviewForm()
+
+    # make review
+    make_review = True
+    if request.user.is_authenticated:
+        user_review_count = ProductReview.objects.filter(user=request.user, product=product).count()
+
+        if user_review_count > 0:
+            make_review = False
+
+    # pagination
+    reviews_per_page = 3
+    paginator = Paginator(review, reviews_per_page)
+    page = request.GET.get('page')
+
+    try:
+        reviews_page = paginator.page(page)
+    except PageNotAnInteger:
+        reviews_page = paginator.page(1)
+    except EmptyPage:
+        reviews_page = paginator.page(paginator.num_pages)
+
+    context = {
+        'p': product,
+        'products': products,
+        'reviews_page': reviews_page,
+        'rating': average_rating,
+        'review_form': review_form,
+        'make_review': make_review,
+    }
+
+    return render(request, 'app/productdetail.html', context)
 
 
 def tag_view(request, slug):
@@ -130,7 +141,7 @@ def tag_view(request, slug):
   return render(request,'app/tag.html', context)
 
 
-
+@login_required
 def add_ratting(request, id):
   product = Product.objects.get(id=id)
   user = request.user
@@ -161,17 +172,17 @@ def add_ratting(request, id):
 
 
 def search_product(request):
-
   qurey = request.GET.get('q')
 
-  product = Product.objects.filter(title__icontains=qurey)
-
-  context = {
-    'query' : qurey,
-    'product' : product
-  }
-
-  return render(request,'app/search.html', context)
+  if qurey:
+    product = Product.objects.filter(title__icontains=qurey)
+    context = {
+      'query' : qurey,
+      'product' : product
+    }
+    return render(request,'app/search.html', context)
+  
+  return render(request, 'app/home.html')
 
 
 def store(request):
@@ -225,8 +236,50 @@ def filter_product(request):
 # ===================================================================================================================#
 
 
-# add to cart
+# add to cart and wish list
 
+@login_required
+def add_to_wish_list(request):
+    product_id = request.GET.get('id')
+    product = get_object_or_404(Product, id=product_id)
+
+    wish_list, created = WishList.objects.get_or_create(user=request.user, product=product)
+
+    if created:
+        wish_list_count = WishList.objects.filter(user=request.user).count()
+        return JsonResponse({'data': {
+            'id': wish_list.product.id,
+            'title': wish_list.product.title,
+            'price': product.discount_rate,
+            'image': wish_list.product.product_image.url,
+            'wish_list_count' : wish_list_count
+
+        }})
+    else:
+        return JsonResponse({'error': 'Product already in wish list'})
+
+
+def wish_list(request):
+    
+    wish_list_items = WishList.objects.filter(user=request.user).order_by('-id')
+    wish_list_count = WishList.objects.filter(user=request.user).count()
+    
+    context = {
+        'wish_list_items': wish_list_items,
+        'wish_list_count' : wish_list_count
+    }
+    
+    return render(request, 'app/wish_list.html', context)
+
+def delete_wish_list(request, id):
+   
+   product = get_object_or_404(Product, id=id)
+   delete_wish = WishList.objects.filter(user=request.user, product=product)
+   delete_wish.delete()
+
+   return redirect('app:wish_list')
+
+@login_required
 def add_to_cart(request):
     user = request.user
     product_id = float(request.GET['id'])
@@ -244,6 +297,9 @@ def add_to_cart(request):
     else:
         cart_item = CartItem.objects.create(user=user, product=product, quantity=quantity, id=product.id)
 
+    cart_count = CartItem.objects.filter(user=user).count()
+
+
     return JsonResponse({
         'data': {
             'id': cart_item.product.id,
@@ -251,19 +307,23 @@ def add_to_cart(request):
             'price': product.discount_rate,
             'quantity': cart_item.quantity,
             'image': cart_item.product.product_image.url,
+            'cart_count': cart_count,            
+            
         },
     })
 
 
-
-
+@login_required
 def cart(request):
+    user = request.user
+    cart_count = CartItem.objects.filter(user=user).count()
     cart_items = CartItem.objects.filter(user=request.user).order_by('-id')
     cart_total = sum(item.total_price() for item in cart_items)
 
     context = {
         'cart_items': cart_items,
         'cart_total': cart_total,
+        'cart_count': cart_count,
     }
 
     return render(request, 'app/cart.html', context)
@@ -322,65 +382,79 @@ def refresh_from_cart(request):
 
 
 @login_required
-def check_out_page(request):
-    # Retrieve the cart items for the user
-    cart_items = CartItem.objects.filter(user=request.user)
-    total_amount = 0
-    cart_total_amount = 0  # Initialize the cart_total_amount
+def check_out_page(request, id=None):
+    cart_total_amount = 0
+    address = []
 
+    cart_items = CartItem.objects.filter(user=request.user)
+  
     # Calculate the total amount for the cart item
     for item in cart_items:
-        cart_total_amount+= item.total_price()
-        
+      cart_total_amount+= item.total_price()
+          
+    try:
+      address = Address.objects.get(user=request.user, status=True)
+    except Address.DoesNotExist:
+      pass  
 
-    # Calculate the total amount for the PayPal payment and create a CartOrder
-    order = CartOrder.objects.create(user=request.user, price=cart_total_amount)
-    for item in cart_items:
-        total = item.total_price()
-        total_amount += total
-
-        # Create a CartOrderProduct entry for each cart item
-        cart_order_product = CartOrderProduct.objects.create(user=request.user,
-            order=order,
-            item=item.product.title,
-            image=item.product.product_image.url,
-            qty=item.quantity,
-            price=item.product.discount_rate,
-            total=total
-        )
-
-    host = request.get_host()
-    paypal_dict = {
-        "business": settings.PAYPAL_RECEIVER_EMAIL,
-        "amount": total_amount,
-        "item_name": "order-item no",
-        "invoice": "No 5",
-        "currency": "USD",
-        "notify_url": "http://{}{}".format(host, reverse("app:paypal-ipn")),
-        "return_url": "http://{}{}".format(host, reverse("app:payment-complete")),
-        "cancel_url": "http://{}{}".format(host, reverse("app:payment-cancel")),
+    context = {
+      'cart_items': cart_items,
+      'cart_total': cart_total_amount, 
+      'address': address
     }
 
-    paypal_payment_btn = PayPalPaymentsForm(initial=paypal_dict)
-    # print(paypal_payment_btn)
-
-    cart_items = CartItem.objects.filter(user=request.user)
-    for item in cart_items:
-      total = item.total_price()
-      total_amount += total
-      return render(request, 'app/checkout.html', {'cart_items': cart_items, 'cart_total': cart_total_amount, 'paypal_payment': paypal_payment_btn})
+    return render(request, 'app/checkout.html',context)
 
 
-    # Clear the cart items for the user after processing the order
+@login_required
+def process_payment(request):
+    if request.method == 'POST':
+      user = request.user
+      payment_mode = request.POST.get('payment_mode')
 
-    return render(request, 'app/checkout.html')
+      cart_items = CartItem.objects.filter(user=user)
+      total_amount = 0
+      default_address = Address.objects.filter(user=user, status=True).first()
+
+      # Create a CartOrder for the user's purchase
+
+      for item in cart_items:
+          total_amount += item.total_price()
+          
+          # Create a CartOrderProduct entry for each item in the cart
+          order = CartOrder.objects.create(user=user, price=total_amount, address=default_address, payment_mode=payment_mode)
+          cart_order_product = CartOrderProduct.objects.create(
+              user=user,
+              id=order.id,
+              order=order,
+              item=item.product.title,
+              image=item.product.product_image.url,
+              qty=item.quantity,
+              price=item.product.discount_rate,
+              total=item.total_price()
+          )
+      if payment_mode == 'paid by Razor pay':
+         return JsonResponse({'status': 'payment is successfully'})
+      
+      # After checkout, delete cart items
+      # cart_items.delete()
+
+    return redirect('app:home')
 
 
-def payment_complete(request):
-      cart_items = CartItem.objects.filter(user=request.user)
-      cart_total = sum(item.total_price() for item in cart_items) 
+def razorpay_total(request):
+   cart = CartItem.objects.filter(user=request.user)
+   total_amount = 0
 
-      return render(request,'app/paymentcompleted.html', {'cart_items': cart_items, 'cart_total': cart_total})  
+   for item in cart:
+      total_amount += item.total_price()
+
+   return JsonResponse({'tatal_amount': total_amount})  
+
+
+def order(request):
+      order= CartOrderProduct.objects.filter(user = request.user)
+      return render(request,'app/order.html', {'order_items': order,})  
 
 
 def payment_cancel(request):
@@ -389,79 +463,182 @@ def payment_cancel(request):
 
 @login_required
 def customer_dash_bord(request):
-   return render(request, 'app/customerdashbord.html') 
+  order= CartOrderProduct.objects.filter(user = request.user)
+  customer_address = Address.objects.filter(user= request.user)
 
-login_required
-def customer_order(request):
-   order= CartOrderProduct.objects.all()
-   return render(request,'app/order.html',{'data':order})
+  if request.method == 'POST':
+
+    name = request.POST.get('name')
+    address = request.POST.get('address')
+    phone = request.POST.get('phone')
+    city = request.POST.get('city')
+    zipcode = request.POST.get('zipcode')
+    state = request.POST.get('state')
+    new_address = Address.objects.create(
+        user = request.user,
+        name = name,
+        address = address,
+        phone = phone,
+        city = city,
+        zipcode = zipcode,
+        state = state
+      )
+
+    return redirect('app:dashbord')
+
+  context = {
+    'order' : order,
+    'address' : customer_address
+   }
+  return render(request, 'app/customerdashbord.html', context) 
+
+
+def make_dafault_address(request):
+   id = request.GET.get('id')
+   Address.objects.update(status = False)
+   Address.objects.filter(id = id).update(status = True)
+
+   return JsonResponse({
+      'boolean' : True
+   })
 
 
 @login_required
 def order_details(request, id):
     # Use get_object_or_404 to retrieve the order or return a 404 page if it doesn't exist
     order = get_object_or_404(CartOrder, id=id)
+
     # Ensure the user can only access their own orders
     if request.user != order.user:
         return HttpResponse("You don't have permission to view this order.")
+
+    address = order.address 
+
     orders = CartOrderProduct.objects.filter(order=order)
 
     context = {
-        'orders': orders
+        'orders': orders,
+        'address': address,
     }
 
     return render(request, 'app/orderdetails.html', context)
 
-           
 
+@login_required
+def check_out_page(request, id=None):
+    cart_total_amount = 0
+    address = []
 
+    cart_items = CartItem.objects.filter(user=request.user)
+  
+    # Calculate the total amount for the cart item
+    for item in cart_items:
+      cart_total_amount+= item.total_price()
+          
+    try:
+      address = Address.objects.get(user=request.user, status=True)
+    except Address.DoesNotExist:
+      pass  
 
+    context = {
+      'cart_items': cart_items,
+      'cart_total': cart_total_amount, 
+      'address': address
+    }
+
+    return render(request, 'app/checkout.html',context)
 
 
 
 # @login_required
-# def customer_order(request):
-#     # Fetch orders for the logged-in user
-#     order = CartOrder.objects.filter(user=request.user).first()  # Use .first() to get a single result
-#     if order:
-#         orders = CartOrderProduct.objects.filter(user=request.user, order=order)
-#         orders_data = serializers.serialize('json',orders)
-#         order_info = {
-#             'order': orders_data
-#         }
-#         return JsonResponse(order_info)
-#     else:
-#         return JsonResponse({'error': 'No orders found for this user'})
+# def check_out_page(request, id=None):
+#     total_amount = 0
+#     cart_total_amount = 0
+#     cart_items = [] 
+#     product = [] 
+#     address = []
 
+#     # Check if an ID is provided (Buy Now button) or not (cart items)
+#     default_address= Address.objects.filter(user=request.user, status=True).first()
+#     if id is not None:
+#         # Get the product by ID
+#         product = Product.objects.get(id=id)
 
+#         # Check if the user is authenticated
+#         if request.user.is_authenticated:
+#             # Create a CartOrder for the user
+#             order = CartOrder.objects.create(user=request.user, price=product.discount_rate, address=default_address)
 
+#             # Create a CartOrderProduct entry for the product
+#             cart_order_product = CartOrderProduct.objects.create(
+#                 user=request.user,
+#                 order=order,
+#                 id = order.id,
+#                 item=product.title,
+#                 image=product.product_image.url,
+#                 qty=product.qty, 
+#                 price=product.discount_rate,
+#                 total=product.discount_rate
+#             )
+#             cart_total_amount=product.discount_rate
+#             total_amount=product.discount_rate
+#     else:  
 
-def buy_now(request):
- return render(request, 'app/buynow.html')
+#         cart_items = CartItem.objects.filter(user=request.user)
+     
+#         # Calculate the total amount for the PayPal payment and create a CartOrder
+#         for item in cart_items:
+#             total = item.total_price()
+#             total_amount += total
+      
+#         # Calculate the total amount for the cart item
+#         for item in cart_items:
+#             cart_total_amount+= item.total_price()
+#             # Create a CartOrderProduct entry for each cart item
+#             order = CartOrder.objects.create(user=request.user, price=cart_total_amount, address= default_address)
+#             cart_order_product = CartOrderProduct.objects.create(user=request.user,
+#                     order=order,
+#                     id = order.id,
+#                     item=item.product.title,
+#                     image=item.product.product_image.url,
+#                     qty=item.quantity,
+#                     price=item.product.discount_rate,
+#                     total=total
+#                 )
+#     print(total_amount)
+#     print(cart_total_amount)   
 
-def profile(request):
- return render(request, 'app/profile.html')
+#     host = request.get_host()
 
-def address(request):
- return render(request, 'app/address.html')
+#     # Create a PayPal payment form
+#     paypal_dict = {
+#         "business": settings.PAYPAL_RECEIVER_EMAIL,
+#         "amount": total_amount,
+#         "item_name": "Order Item No",
+#         "invoice": "No 5",
+#         "currency": "USD",
+#         "notify_url": "http://{}{}".format(host, reverse("app:paypal-ipn")),
+#         "return_url": "http://{}{}".format(host, reverse("app:payment-complete")),
+#         "cancel_url": "http://{}{}".format(host, reverse("app:payment-cancel")),
+#     }
+    
+#     # checking user make address
+#     try:
+#       address = Address.objects.get(user=request.user, status=True)
+#     except Address.DoesNotExist:
+#       pass  
 
-def orders(request):
- return render(request, 'app/orders.html')
+#     paypal_payment_btn = PayPalPaymentsForm(initial=paypal_dict)
 
-def change_password(request):
- return render(request, 'app/changepassword.html')
+#     # Clear the cart items for the user after processing the order
+#     # cart_items.delete()
 
-def mobile(request):
- return render(request, 'app/mobile.html')
+#     context = {
+#       'cart_items': cart_items,
+#       'cart_total': cart_total_amount, 
+#       'paypal_payment': paypal_payment_btn,
+#       'product': product,
+#       'address': address
+#     }
 
-def login(request):
- return render(request, 'app/login.html')
-
-def customerregistration(request):
- return render(request, 'app/customerregistration.html')
-
-
-
-
-
-
+#     return render(request, 'app/checkout.html',context)

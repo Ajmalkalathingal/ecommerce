@@ -2,83 +2,232 @@
 {% load static %}
 {% block title %}Login{% endblock title %}
 {% block main-content %}
-
-
-<body>
     <style>
         #content {
-        margin-top: 20px;
+        margin-top: 5px;
         padding: 20px;
-        border: 1px solid #ddd;
+        border: 1px solid black;
         border-radius: 5px;
         background-color: #f9f9f9;
+    }
+    .list li{
+        border: 1px solid #ddd;
+        text-align: center;
+        margin: 15px 0;
+        color: #420991;
+        border-radius: 5px;
+    }
+
+    .dashbord{
+        border: 1px solid #ddd;
+        text-align: center;
+        margin: 15px 0;
+        color: #420991;
+        border-radius: 5px;
+
+    }
+
+    a{
+        text-decoration: none;
     }
     .order-item img {
         height: 30%;
         width: 30%;
     }
-    </style>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-info">
-        <a class="navbar-brand" href="#">Customer Dashboard</a>
-    </nav>
+ 
+    li:hover{
+        background-color: lemonchiffon;
+    }
+    .icon-top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 10px;
+    font-size: 24px;
+    color: #007bff; /* Adjust the color as needed */
+    }
     
-    <div class="container mt-4">
+    </style>
+
+    <div class="container mt-4 list">
         <div class="row">
-            <div class="col-md-12">
-                <!-- Sidebar -->
+            <div class="col-md-4">
+               
                 <ul class="list-group">
-                    <li class="list-group-item"><a href="#">Home</a></li>
-                    <li class="list-group-item"><a href="#">Account</a></li>
-                    <li class="list-group-item" id="orders-link"><a href="{% url 'app:orders' %}">Orders</a></li>
-                    <li class="list-group-item"><a href="#">Analytics</a></li>
+                    <h2 class="navbar-brand  text-center mt-5 bg-primary text-white rounded pr-2 dashbord" href="#">Customer Dashboard</h2>
+                    
+                    <li class="list-group-item">Home</li>
+                    <li class="list-group-item" id="orders-link">
+                        <a onclick="toggleContent('orders')">Orders</a>
+                    </li>
+                    <li class="list-group-item" id="address-link">
+                        <a onclick="toggleContent('address')">Address</a>
+                    </li>
+                    <li class="list-group-item" id="analytics-link">
+                        <a onclick="toggleContent('analytics')">Analytics</a>
+                    </li>
+
                 </ul>
+            </div>
+
+            <div class="col-md-8 mt-4">
+                <div id="orders-content" style="display: none">
+                    <h2 class="text-center text-primary">Ordered Products</h2>
+                    <div class="row">
+                        {% for item in order %}
+                        <div class="col-md-6">
+                            <div class="card mt-3" style="width:  85%;">
+                                <div class="row no-gutters">
+                                    <div class="col-md-4">
+                                        <img class="card-img" src="{{ item.image }}" alt="{{ item.title }}">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <h3 class="card-title">Item : {{ item.item }}</h3>
+                                            <p class="card-text"> Price : {{ item.price }}</p>
+                                            <p class="card-text"> Quantity : {{ item.qty }}</p>
+                                            <p class="card-text"> Total Price : {{ item.total }}</p>
+                                            <a href="{% url 'app:orders-details' item.id %}" class="btn btn-primary">Order Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div id="address-content" style="display: none">
+
+                    <div class="container mt-4">
+                        <div class="col-md-6 offset-md-3">
+                            <h2 class="text-center">Address Form</h2>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="form-group mb-3">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="address">Address:</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="address">phone:</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your number" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="city">City:</label>
+                                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter your city" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="zipcode">Zip Code:</label>
+                                    <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Enter your zip code" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="state">State:</label>
+                                    <input type="text" class="form-control" id="state" name="state" placeholder="Enter your state" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <h2 class="text-center text-primary">Address</h2>
+                    <div class="row">
+                        {% for a in address %}
+                        <div class="col-md-6">
+                            <div class="card mt-3 no-hover-card">
+                                <div class="row no-gutters">
+                                    <div class="col-md-8">
+                                        <div class="card-body details">
+                                            <h5 class="card-title">{{ a.name }}</h5>
+                                            <p class="card-text"><strong>Address:</strong> {{ a.address }}</p>
+                                            <p class="card-text"><strong>Phone:</strong> {{ a.phone }}</p>
+                                            <p class="card-text"><strong>City:</strong> {{ a.city }}</p>
+                                            <p class="card-text"><strong>Zip Code:</strong> {{ a.zipcode }}</p>
+                                            <p class="card-text"><strong>State:</strong> {{ a.state }}</p>
+                                            {{a.id}}
+                                            {% if a.status %}
+                                                <i data-address="{{a.id}}" class="fa fa-check-circle text-primary check check{{a.id}}"></i>
+                                                <button data-address="{{a.id}}" style="display: none;" class=" make-default-addressbtn btn-primary button{{a.id}} action"> Make Default</button>
+                                            {% else %}
+                                                <i data-address="{{a.id}}" style="display: none;" class="check fa fa-check-circle text-primary check{{a.id}} "></i>
+                                                <button data-address="{{a.id}}" class=" make-default-address btn btn-primary button{{a.id}} action"> Make Default</button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+
+
+                </div>
+                </div>
+                <div id="analytics-content" style="display: none" class="col-md-4">
+                    <h2 class="text-center text-primary">Analytics</h2>
+                    <!-- Your analytics content -->
+                </div>
+            </div>
             </div>
         </div>
     </div>
-
-
-    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-      jQuery(document).ready(function () {
-          $("#orders-link").on('click', function (e) {
-            e.preventDefault()
-              // Send an AJAX request to retrieve order data
-              $.ajax({
-                  url: '/dashbord/fetch_orders/',
-                  dataType: 'json',
-                  success: function (data) {
-                      // Clear the content area
-                      console.log(data)
-                      let content = $("#content");
-                      content.empty();
-  
-                      // Parse the JSON response
-                      let orders = JSON.parse(data.order);
-  
-                      // Loop through the orders and display them
-                      for (let i = 0; i < orders.length; i++) {
-                          let order = orders[i].fields;
-                          let orderStatus = order.order.paid_status;
-                          let orderItem = `
-                              <div class="order-item">
-                                <a> <img src="${order.image}" alt="${order.item}"></a>
-                                  <p>Item: ${order.item}</p>
-                                  <p>Quantity: ${order.qty}</p>
-                                  <p>Price: ${order.price}</p>
-                                  <p>Total: ${order.total}</p>
-                                  <p>Status: ${orderStatus}</p>
-                              </div>
-                          `;
-                          content.append(orderItem);
-                      }
-                  }
-              });
-          });
-      });
-  </script>
-  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         
-         -->
+        <script>
+              jQuery(document).ready(function () {
+    $(document).on('click', '.make-default-address', function () {
+        let id = $(this).attr('data-address');
+        console.log('Button Clicked:', id);
 
-</body>
-{% endblock %}
+        $.ajax({
+            url: '/make-default-address',
+            data: { 'id': id },
+            dataType: 'json',
+            success: function (res) {
+                console.log('Success:', res);
+                if (res.boolean === true) {
+                    console.log('Action Executed');
+                    
+                    $('.check').hide();
+                    $('.action').show();
+
+                    $('.check'+id).show();
+                    $('.button'+id).hide();
+                }    
+            },
+            error: function (error) {
+                console.error('AJAX Error:', error);
+            }
+        });
+    });
+});
+
+            const toggleContent = (section) => {
+                var sections = ["orders", "address", "analytics"];
+                for (var i = 0; i < sections.length; i++) {
+                    var content = document.getElementById(sections[i] + "-content");
+                    var link = document.getElementById(sections[i] + "-link");
+                    if (sections[i] === section) {
+                        content.style.display = "block";
+                        link.classList.add("active");
+                    } else {
+                        content.style.display = "none";
+                        link.classList.remove("active");
+                    }
+                }
+            }
+            toggleContent('address')
+        </script>
+        
+    
+    
+
+{% endblock main-content %}
+
+
+
+
