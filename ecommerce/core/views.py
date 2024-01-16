@@ -258,7 +258,7 @@ def add_to_wish_list(request):
     else:
         return JsonResponse({'error': 'Product already in wish list'})
 
-
+@login_required
 def wish_list(request):
     
     wish_list_items = WishList.objects.filter(user=request.user).order_by('-id')
@@ -271,13 +271,13 @@ def wish_list(request):
     
     return render(request, 'app/wish_list.html', context)
 
+@login_required
 def delete_wish_list(request, id):
-   
-   product = get_object_or_404(Product, id=id)
-   delete_wish = WishList.objects.filter(user=request.user, product=product)
-   delete_wish.delete()
+    product = get_object_or_404(Product, id=id)
+    delete_wish = WishList.objects.filter(user=request.user, product=product)
+    delete_wish.delete()
 
-   return redirect('app:wish_list')
+    return redirect('app:wish-list')
 
 @login_required
 def add_to_cart(request):
@@ -304,7 +304,7 @@ def add_to_cart(request):
         'data': {
             'id': cart_item.product.id,
             'title': cart_item.product.title,
-            'price': product.discount_rate,
+            'price': cart_item.product.discount_rate,
             'quantity': cart_item.quantity,
             'image': cart_item.product.product_image.url,
             'cart_count': cart_count,            

@@ -50,34 +50,25 @@ def add_product(request):
         form = ProductForm()  
     return render(request, 'admindashboard/add-product.html', {'form': form})
 
-def edit_product(request, id):
-    get_product = Product.objects.get(id=id)
-    brand = Brand.objects.all()
-    cetogeory = Cetogeory.objects.all()
-
-    context = {
-        'data':get_product,
-        'brand':brand,
-        'cetogeory':cetogeory,
-    }
-    return render(request, 'admindashboard/update-product.html', context)
 
 def update_product(request, id):
     u_product = Product.objects.get(id=id)
-    p_form = ProductForm(instance=u_product)  # Set data from the 'u_product' instance
+
     if request.method == "POST":
-        p_form = ProductForm(request.POST, request.FILES, instance=u_product)  # Update with POST data
+        p_form = ProductForm(request.POST, request.FILES, instance=u_product) 
         if p_form.is_valid():
-            print(p_form)
             p_form.save()
             return redirect('admindashboard:list-product')
+    else:
+        p_form = ProductForm(instance=u_product)
 
     context = {
         'data': u_product,
         'p_form': p_form,
     }
-    print(p_form)
+
     return render(request, 'admindashboard/update-product.html', context)
+
    
 
 
@@ -86,3 +77,21 @@ def delete_product(request,id):
     del_product.delete()
     return redirect('admindashboard:list-product')
 
+from django.db.models import Avg
+
+def review(request):
+    products = Product.objects.all()
+    
+    product_data = []
+    
+    for product in products:
+        product_reviews = ProductReview.objects.filter(product=product)
+        average_rating = product_reviews.aggregate(avg_rating=Avg('rating'))['avg_rating']
+        
+        product_data.append({
+            'product': product,
+            'reviews': product_reviews,
+            'average_rating': average_rating,
+        })
+
+    return render(request, 'admindashboard/review.html', {'product_data': product_data})

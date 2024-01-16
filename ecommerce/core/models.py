@@ -125,6 +125,13 @@ class ProductReview(models.Model):
     review = models.TextField()
     rating = models.IntegerField(choices=RATING, default=None)
     date = models.DateTimeField(auto_now_add=True)
+
+    def average_rating(self, obj):
+        reviews = ProductReview.objects.filter(product=obj)
+        if reviews.exists():
+            total_ratings = sum(review.rating for review in reviews)
+            return total_ratings / reviews.count()
+        return 0
  
 
 class WishList(models.Model):

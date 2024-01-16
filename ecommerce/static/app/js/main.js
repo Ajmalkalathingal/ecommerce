@@ -39,7 +39,7 @@
                     } 
                     else {
     
-                        console.error('Error adding item to cart');
+                        alert("please log");
                     }
                 },
             });

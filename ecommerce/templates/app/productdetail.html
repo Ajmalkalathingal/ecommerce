@@ -36,10 +36,10 @@
 
             </div>
             <div class="mb-4">
-                <button data-index="{{p.id}}" class="add-to-cart btn btn-danger shadow px-5 py-2 me-3" style="border: none; text-decoration: none;" id="add-to-cart">Add to Cart </button>
+                <button data-index="{{p.id}}" class="add-to-cart btn btn-primary shadow px-5 py-2 me-3" style="border: none; text-decoration: none;" id="add-to-cart">Add to Cart </button>
 
             <!-- product detail page template -->
-            <button style="border: none;" data-wish="{{p.id}}" class=" wishlist  wishlist{{p.id}}">
+            <button style="border: none; background: none;" data-wish="{{p.id}}" class=" wishlist  wishlist{{p.id}}">
                 <a href="{% url 'app:add-to-wish-list' %}"><i class="fa-regular fa-heart heart" style="margin-left: 10px;"></i></a>
               </button>
 
@@ -60,7 +60,7 @@
 
 <div class="container mt-5">
     <div class="text-center">
-      <h4 class="mb-4">Discover Our Products</h4>
+      <h4 class="mb-4">Discover related Products</h4>
       <!-- <span class="">{{ product.count }}</span> -->
       <hr class="mb-5">
     </div>

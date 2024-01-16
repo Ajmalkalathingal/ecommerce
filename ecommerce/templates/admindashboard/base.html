@@ -7,30 +7,87 @@
     <title>Dashboard</title>
     <!-- Add Bootstrap CSS link here -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+        <!--FontAwesome CSS-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+            integrity="sha512-...your-integrity-hash-here..." crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+            integrity="sha512-...your-integrity-hash-here..." crossorigin="anonymous" />
     <!-- Add your custom CSS styles here -->
-    <link rel="stylesheet" href="styles.css">
+    
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <style>
     .card-section {
-        margin-bottom: 0%; /* You can adjust the value as needed */
+        margin-bottom: 0%;
+    }
+    .nav-link {
+        color: #fff;
+    }
+    .space li {
+        padding: 20px;
     }
 </style>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-        <div class="container">
-            <h4 class="text-center"><a class="navbar-brand" href="#">Dashboard</a></h4>
-            <!-- Search Form -->
-            <form class="form-inline my-2 my-lg-0 ml-auto">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-            </form>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Top Navigation Bar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-primary fixed-top">
+                <div class="container d-flex justify-content-between align-items-center">
+                    <h4 class=""><a class="navbar-brand text-light text-center" href="#">Dashboard</a></h4>
+                    <form class="form-inline my-2 my-lg-0 ml-auto">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
+            
+            <!-- Left Sidebar for Navigation Menu -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-primary text-white sidebar text-center pt-5" style="min-height: 100vh;">
+                <div class="position-sticky mt-5 dash side-nav">
+                    <ul class="nav flex-column space">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'admindashboard:users' %}">
+                                Registered User
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admindashboard:list-product' %}">
+                                Products List
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admindashboard:add-product' %}">
+                                Add Product
+                            </a>
+                        </li>
+                        <li class "nav-item">
+                            <a class="nav-link" href="#">
+                                Category
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link">
+                                Brand
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admindashboard:review' %}">
+                                Reviews
+                            </a>
+                        </li>
+                        <!-- Add more menu items for reports and products here -->
+                    </ul>
+                </div>
+            </nav>
+
+            {% block maincontent %}
+
+            {% endblock maincontent %}
         </div>
-    </nav>
-
-    {% block maincontent %}
+    </div>
     
-    {% endblock maincontent %}
-
     <!-- Add Bootstrap JS and jQuery script links here -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

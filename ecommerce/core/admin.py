@@ -8,7 +8,7 @@ class AddressModelAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductModleAdmin(admin.ModelAdmin):
-    list_display = ['title', 'selling_price', 'discount_rate', 'description', 'brand', 'featured', 'category', 'product_image' ] 
+    list_display = ['id','title', 'selling_price', 'discount_rate', 'description', 'brand', 'featured', 'category', 'product_image' ] 
 
 @admin.register(CartOrder)
 class CartAdminModel(admin.ModelAdmin):

@@ -1,0 +1,59 @@
+{% extends 'admindashboard/base.html' %}
+{% load static %}
+
+{% block maincontent %}
+<style>
+    .data{
+        margin-top: 80px;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9 data">
+
+            <!-- Display product reviews in a table -->
+            <h4>Product Reviews</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Image</th>
+                        <th>Average Rating</th>
+                        <th>User</th>
+                        <th>Rating</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product_entry in product_data %}
+                        <tr>
+                            <td>{{ product_entry.product.title }}</td>
+                            <td><img src="{{product_entry.product.product_image.url}}" width="50" height="50" class="rounded" alt=""></td>
+                            <td>{{ product_entry.average_rating|floatformat:1 }}</td>
+                            <td></td> <!-- Placeholder for User, as there can be multiple reviews -->
+                            <td></td> <!-- Placeholder for Rating, as there can be multiple reviews -->
+                            <td></td> <!-- Placeholder for Date, as there can be multiple reviews -->
+                        </tr>
+                        {% for review in product_entry.reviews %}
+                            <tr>
+                                <td></td> <!-- Empty cell for Product, as it's already displayed in the first row -->
+                                <td></td> <!-- Empty cell for Average Rating, as it's already displayed in the first row -->
+                                <td></td> <!-- Empty cell for Average Rating, as it's already displayed in the first row -->
+                                <td>{{ review.user.username }}</td>
+                                <td>
+                                    <!-- Display stars based on rating -->
+                                    {% for _ in review.rating|ljust:review.rating %}
+                                        <i class="fa-sharp fa-solid fa-star text-warning"></i>
+                                    {% endfor %}
+                                </td>
+                                <td>{{ review.date }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock maincontent %}
