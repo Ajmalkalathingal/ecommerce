@@ -29,19 +29,21 @@
                     'image': image,
                 },
                 dataType: 'json',
+                
                 success: function (response) {
-                    if (response.data) {
-                      
+                  if (response.message === 'Item added to cart') {
                       console.log('Item added to cart');
-                        console.log('Cart data:', response.data);
-                        $('#add-to-cart').html('Item added');
-                        $('#item-count').text(response.data.cart_count)
-                    } 
-                    else {
-    
-                        alert("please log");
-                    }
-                },
+                      console.log('Cart data:', response.data);
+                      $('#add-to-cart').html('Item added');
+                      alert('Item added to cart');
+                      $('#item-count').text(response.data.cart_count);
+                  } else if (response.message === 'Cart item already exists') {
+                      console.log('Cart item already exists');
+                      alert('Cart item already exists');
+                  } else {
+                      alert('Unexpected response from server');
+                  }
+              },
             });
         });
     });

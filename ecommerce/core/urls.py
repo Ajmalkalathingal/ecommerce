@@ -69,35 +69,4 @@ urlpatterns = [
     path('make-default-address/',views.make_dafault_address, name='make-default-address'),
 
 
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-    # path('cart/', views.add_to_cart, name='add-to-cart'),
-    # path('buy/', views.buy_now, name='buy-now'),
-    # path('profile/', views.profile, name='profile'),
-    # # path('orders/', views.orders, name='orders'),
-    # path('changepassword/', views.change_password, name='changepassword'),
-    # path('mobile/', views.mobile, name='mobile'),
-    # path('registration/', views.customerregistration, name='customerregistration'),
-
-    # path('', views.home, name='home'),
-    # # path('',views.ProductView.as_view(),name='home'),
-    # path('product/', views.product_list_view, name='product_list'),
-    # path('category/', views.category_list_view, name='category'),
-    # path('category/<cid>/', views.category_product_list, name='category_product_list'),
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

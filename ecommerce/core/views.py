@@ -288,17 +288,16 @@ def add_to_cart(request):
     product = get_object_or_404(Product, id=product_id)
 
     #  to get the cart item if it exists
-    cart_item = CartItem.objects.filter(user=user, product=product, id=product.id).first()
+    cart_item = CartItem.objects.filter(user=user, product=product).first()
 
     if cart_item:
-        cart_item.quantity = quantity
-        cart_item.save()
+        # Item already exists in the cart, return appropriate response
+        return JsonResponse({'message': 'Cart item already exists'})
 
-    else:
-        cart_item = CartItem.objects.create(user=user, product=product, quantity=quantity, id=product.id)
+    # Item doesn't exist in the cart, create a new cart item
+    cart_item = CartItem.objects.create(user=user, product=product, quantity=quantity)
 
     cart_count = CartItem.objects.filter(user=user).count()
-
 
     return JsonResponse({
         'data': {
@@ -307,10 +306,11 @@ def add_to_cart(request):
             'price': cart_item.product.discount_rate,
             'quantity': cart_item.quantity,
             'image': cart_item.product.product_image.url,
-            'cart_count': cart_count,            
-            
+            'cart_count': cart_count,
         },
+        'message': 'Item added to cart'
     })
+
 
 
 @login_required
