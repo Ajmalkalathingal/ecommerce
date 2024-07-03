@@ -14,6 +14,7 @@
           <div class="card-body">
             <h4 class="card-title text-primary">Wish list</h4>
             <hr>
+            {% if wish_list_items %}
                 <table class="table table-stripeds table-bordereds text-center">
                   <thead>
                     <tr>
@@ -23,19 +24,22 @@
                       <th>Details</th>
                       <th>Delete</th>
                     </tr>
-                    {% for item in wish_list_items %}
-                    <tr>
-                      <td>
-                        <img src="{{ item.product.product_image.url }}"  alt="{{ item.title }}" height="50px" class="me-2" width="50px">
-                        {{ item.product.title }}</td>
-                      <td>{{ item.product.discount_rate }}</td>
-                      <td>{{item.product.qty}}</td>
-                      <td><a href="{% url 'app:productdetail' item.product.id %}" class="btn btn-primary">View Details</a></td>
-                      <td><a href="{% url 'app:delete-wish-list' item.product.id  %}"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
-                    </tr>
-                    {% endfor %}
+                      {% for item in wish_list_items %}
+                      <tr>
+                        <td>
+                          <img src="{{ item.product.product_image.url }}"  alt="{{ item.title }}" height="50px" class="me-2" width="50px">
+                          {{ item.product.title }}</td>
+                        <td>{{ item.product.discount_rate }}</td>
+                        <td>{{item.product.qty}}</td>
+                        <td><a href="{% url 'app:productdetail' item.product.id %}" class="btn btn-primary">View Details</a></td>
+                        <td><a href="{% url 'app:delete-wish-list' item.product.id  %}"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+                      </tr>
+                      {% endfor %}
                   </thead>
                 </table>
+                {% else %} 
+                <h1>No Wishlist item</h1> 
+                {% endif %} 
                   </div>
                 </div>
           </div>

@@ -1,53 +1,68 @@
 {% extends 'app/base.html' %}
 {% load static %}
+
 {% block title %}Payment Cancelled{% endblock title %}
+
+{% block extra_css %}
+
+{% endblock extra_css %}
 
 {% block main-content %}
 <div class="container mt-5">
-  <div class="text-center">
-    <h4 class="mb-4">Your Order Details </h4>
-  </div>
+    <div class="text-center">
+        <h4 class="mb-4">Your Order Details </h4>
+    </div>
+
+    <!-- Order Items -->
     <div class="row">
         <div class="col-md-12">
-            {% for item in orders %}
-            <div class="card" style="width:  85%;">
-                <div class="row no-gutters">
-                  <div class="col-md-4">
-                    <img class="card-img" src="{{ item.image }}" alt="{{ item.title }}">
-                  </div>
-                  <div class="col-md-8">
-                    <div class="card-body">
-                      <h3 class="card-title">Item : {{ item.item }}</h3>
-                      <p class="card-text"> Price : {{ item.price }}</p>
-                      <p class="card-text"> Quantity : {{ item.qty }}</p>
-                      <p class="card-text"> Total Price : {{ item.total }}</p>
-                      <p class="card-text"> Paid Amount : {{ item.order.price }}</p>
-                      <p class="card-text"> Paid Amount : {{ item.order.payment_mode }}</p>
-                      <p class="card-text"> Paid Status : {{ item.order.paid_status }}</p>
-                      <p class="card-text"> Ordered Date : {{ item.order.orderd_date }}</p>
-                      <p class="card-text"> Status : {{ item.order.status }}</p>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
-            {% endfor %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Paid Amount</th>
+                        <th>Payment Mode</th>
+                        <th>Paid Status</th>
+                        <th>Ordered Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in orders %}
+                    <tr>
+                        <td class="text-center"><img src="{{ item.image }}" alt="{{ item.title }}" class="img-thumbnail" width="300" height="300"></td>
+                        <td class="text-center">{{ item.item }}</td>
+                        <td class="text-center">{{ item.price }}</td>
+                        <td class="text-center">{{ item.qty }}</td>
+                        <td class="text-center">{{ item.total }}</td>
+                        <td class="text-center">{{ item.order.price }}</td>
+                        <td class="text-center">{{ item.order.payment_mode }}</td>
+                        <td class="text-center">{{ item.order.paid_status }}</td>
+                        <td class="text-center">{{ item.order.orderd_date }}</td>
+                        <td class="text-center">{{ item.order.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
 
-<div class="card mt-3 no-hover-card">
-  <div class="row no-gutters">
-      <div class="col-md-8">
-          <div class="card-body details">
-              <h5 class="card-title">{{ address.name }}</h5>
-              <p class="card-text"><strong>Address:</strong> {{ address.address }}</p>
-              <p class="card-text"><strong>Phone:</strong> {{ address.phone }}</p>
-              <p class="card-text"><strong>City:</strong> {{ address.city }}</p>
-              <p class="card-text"><strong>Zip Code:</strong> {{ address.zipcode }}</p>
-              <p class="card-text"><strong>State:</strong> {{ address.state }}</p>
-          </div>
-      </div>
-  </div>
+    <!-- Shipping Address -->
+    <div class="card mt-3 shipping-address">
+      <h2>Shipping Address</h2>
+        <div class="card-body">
+            <h5 class="card-title">{{ address.name }}</h5>
+            <p class="card-text"><strong>Address:</strong> {{ address.address }}</p>
+            <p class="card-text"><strong>Phone:</strong> {{ address.phone }}</p>
+            <p class="card-text"><strong>City:</strong> {{ address.city }}</p>
+            <p class="card-text"><strong>Zip Code:</strong> {{ address.zipcode }}</p>
+            <p class="card-text"><strong>State:</strong> {{ address.state }}</p>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

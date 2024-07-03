@@ -35,17 +35,27 @@
                 <input type="number" min="1" class="qty_{{p.id}}" value="1" style="width: 60px;">
 
             </div>
-            <div class="mb-4">
-                <button data-index="{{p.id}}" class="add-to-cart btn btn-primary shadow px-5 py-2 me-3" style="border: none; text-decoration: none;" id="add-to-cart">Add to Cart </button>
+            {% if not request.user.is_authenticated %}
+                <script>
+                    window.location.href = "{% url 'auth:login' %}";
+                </script>
+                {% else %}
+                <div class="mb-4">
+                    <button data-index="{{ p.id }}" class="add-to-cart btn btn-primary shadow px-5 py-2 me-3" style="border: none; text-decoration: none;" id="add-to-cart">Add to Cart </button>
 
-            <!-- product detail page template -->
-            <button style="border: none; background: none;" data-wish="{{p.id}}" class=" wishlist  wishlist{{p.id}}">
-                <a href="{% url 'app:add-to-wish-list' %}"><i class="fa-regular fa-heart heart" style="margin-left: 10px;"></i></a>
-              </button>
+                    <!-- product detail page template -->
+                    {% if wishlist %}
+                    <button style="border: none; background: none;" data-wish="{{ p.id }}" class="wishlist wishlist{{ p.id }}">
+                        <a href="{% url 'app:add-to-wish-list' %}"><i class="fa-solid fa-heart heart" style="margin-left: 10px;"></i></a>
+                    </button>
+                    {% else %}
+                    <button style="border: none; background: none;" data-wish="{{ p.id }}" class="wishlist wishlist{{ p.id }}">
+                        <a href="{% url 'app:add-to-wish-list' %}"><i class="fa-regular fa-heart heart" style="margin-left: 10px;"></i></a>
+                    </button>
+                    {% endif %}
+                </div>
+                {% endif %}
 
-
-                
-            </div>
             <h5 class="mt-4">Available Offers</h5>
             <ul>
                 <li>Bank Offer: 5% Unlimited Cashback on Flipkart Axis Bank Credit</li>

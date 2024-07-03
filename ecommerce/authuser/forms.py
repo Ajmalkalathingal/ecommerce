@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordResetForm as DjangoPasswordResetForm
 from authuser.models import User
 
 class UserRegisterForm(UserCreationForm):
@@ -12,3 +13,13 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email'] 
+
+
+class PasswordResetForm(DjangoPasswordResetForm):
+    email = forms.EmailField(max_length=254, required=True, widget=forms.EmailInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Email address',
+        'type': 'email',
+        'name': 'email',
+        'id': 'email'
+    }))

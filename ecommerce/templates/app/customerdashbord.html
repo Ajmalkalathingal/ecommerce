@@ -56,7 +56,9 @@
                 <ul class="list-group">
                     <h2 class="navbar-brand  text-center mt-5 bg-primary text-white rounded pr-2 dashbord" href="#">Customer Dashboard</h2>
                     
-                    <li class="list-group-item">Home</li>
+                    <li class="list-group-item" id="home-link">
+                        <a onclick="toggleContent('home')">Home</a>
+                    </li>
                     <li class="list-group-item" id="orders-link">
                         <a onclick="toggleContent('orders')">Orders</a>
                     </li>
@@ -166,10 +168,14 @@
 
 
                 </div>
-                </div>
                 <div id="analytics-content" style="display: none" class="col-md-4">
                     <h2 class="text-center text-primary">Analytics</h2>
                     <!-- Your analytics content -->
+                </div>
+                <div id="home-content" style="display: none" class="col-md-4">
+                    <h2 class="text-center text-primary">Home</h2>
+                    <!-- Your analytics content -->
+                </div>
                 </div>
             </div>
             </div>
@@ -207,7 +213,7 @@
 });
 
             const toggleContent = (section) => {
-                var sections = ["orders", "address", "analytics"];
+                var sections = ["home","orders", "address", "analytics"];
                 for (var i = 0; i < sections.length; i++) {
                     var content = document.getElementById(sections[i] + "-content");
                     var link = document.getElementById(sections[i] + "-link");
@@ -220,7 +226,7 @@
                     }
                 }
             }
-            toggleContent('address')
+            toggleContent('home')
         </script>
         
     

@@ -8,15 +8,12 @@ from django.db.models import Count,Avg
 from django.shortcuts import get_object_or_404
 from .forms import ProductReviewForm
 
-# from django.core import serializers
-# import json
-
+from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from paypal.standard.forms import PayPalPaymentsForm
-from . import views
 
 #tag
 from taggit.models import Tag
@@ -93,6 +90,9 @@ def product_datail_view(request, id):
     # review form
     review_form = ProductReviewForm()
 
+    # whish list 
+    wishlist = WishList.objects.filter(status=True)
+
     # make review
     make_review = True
     if request.user.is_authenticated:
@@ -116,6 +116,7 @@ def product_datail_view(request, id):
     context = {
         'p': product,
         'products': products,
+        'wishlist': wishlist,
         'reviews_page': reviews_page,
         'rating': average_rating,
         'review_form': review_form,
@@ -241,6 +242,7 @@ def filter_product(request):
 @login_required
 def add_to_wish_list(request):
     product_id = request.GET.get('id')
+    print("product_id", product_id)
     product = get_object_or_404(Product, id=product_id)
 
     wish_list, created = WishList.objects.get_or_create(user=request.user, product=product)
@@ -434,11 +436,15 @@ def process_payment(request):
               total=item.total_price()
           )
       if payment_mode == 'paid by Razor pay':
+         order.paid_status = True
+         order.save()
+         cart_items.delete()
          return JsonResponse({'status': 'payment is successfully'})
       
       # After checkout, delete cart items
       # cart_items.delete()
 
+    cart_items.delete()
     return redirect('app:home')
 
 

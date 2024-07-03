@@ -3,47 +3,43 @@
 {% block title %}Customer Registration{% endblock title %}
 {% block main-content %}
 <div class="container">
- <div class="row my-3">
-  <div class="col-sm-6 offset-sm-3">
-   <h3>Customer Registration</h3>
-   <hr>
-
-   <form method="POST" novalidate class="shadow p-5">
-    
-    {% csrf_token %}
-    
-    <div class="form-group ">
-      {{form.username}}
+    <div class="row my-3">
+        <div class="col-sm-6 offset-sm-3">
+            <h3>Customer Registration</h3>
+            <hr>
+            
+            <!-- Display messages -->
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            
+            <form method="POST" novalidate class="shadow p-5">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.username }}
+                </div>
+                <div class="form-group">
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    {{ form.password1 }}
+                </div>
+                <div class="form-group">
+                    {{ form.password2 }}
+                </div>
+                <div class="container">
+                    <button type="submit" class="btn btn-danger">Submit</button>
+                </div>
+                <br>
+                <div class="text-center text-primary fw-bold">
+                    <small>Existing User? <a href="{% url 'auth:login' %}" class="text-danger">Login Now</a></small>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div class="form-group ">
-      {{form.email}}
-    </div>
-    
-    <div class="form-group ">
-      {{form.password1}}
-    </div>
-    <div class="form-group ">
-      {{form.password2}}
-    </div>
-    
-    <div class="container">
-     <button type="submit" class="btn btn-danger ">Submit</button>
-    </div>
-    <br>
-    <div class="text-center text-primary fw-bold"><small> Existing User ? <a href=""
-       class="text-danger">Login Now</a> </small></div>
-    
-   
-   </form>
-  </div>
- </div>
 </div>
-
-
 {% endblock main-content %}
-
-
-
-
-

@@ -7,6 +7,14 @@
   <div class="col-sm-6 offset-sm-3">
    <h3>Login</h3>
    <hr>
+
+   {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-primary {{ message.tags }}" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
    <form  method="POST" novalidate class="shadow p-5">
 
     {% csrf_token %}
@@ -19,10 +27,10 @@
      <label for="exampleInputPassword1" class="form-label">Password</label>
      <input type="password" name="psw" class="form-control" id="exampleInputPassword1">
     </div>
-    <small><a href="#">Forgot Password ?</a></small> <br>
+    <small><a href="{% url 'auth:forget_password' %}">Forgot Password ?</a></small> <br>
     <input type="submit" class="btn btn-primary mt-4" value="Login">
     <br>
-    <div class="text-center text-primary fw-bold"><small>New to ShoppinglyX ? <a href=""
+    <div class="text-center text-primary fw-bold"><small>New to ShoppinglyX ? <a href="{% url 'auth:sign_in' %}"
        class="text-danger">Create an Account</a> </small></div>
    </form>
   </div>

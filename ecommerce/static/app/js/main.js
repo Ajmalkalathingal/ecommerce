@@ -127,7 +127,7 @@ jQuery(document).ready(function () {
           console.log('sending');
         },
         success: function (res) {
-          console.log(res);
+          console.log(res.total_item);
           $('#item-count').text(res.total_item);
           $('#remove-cart').html(res.data);
         }
@@ -207,10 +207,10 @@ jQuery(document).ready(function() {
     let qty = $('.qty_' + index).val();
     let image = $('.image_' + index).val();
 
-    console.log('ID:', productId);
-    console.log('Title:', title);
-    console.log('Price:', price);
-    console.log('img:', image);
+    // console.log('ID:', productId);
+    // console.log('Title:', title);
+    // console.log('Price:', price);
+    // console.log('img:', image);
 
     $.ajax({
       url: '/add-to-wish-list',

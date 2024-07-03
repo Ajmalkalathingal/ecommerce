@@ -22,5 +22,6 @@ urlpatterns = [
     path('', include('core.urls')),
     path('auth/', include('authuser.urls')),
     path('admind-ashboard/', include('admindashboard.urls')),
+    path('auth/', include('django.contrib.auth.urls')),
 ]
 
